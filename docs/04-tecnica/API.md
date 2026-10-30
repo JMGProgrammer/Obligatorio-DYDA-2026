@@ -1,61 +1,55 @@
-# API — Contrato HTTP preliminar
+# API | Contrato REST ASP.NET Core
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
-## 1. Contexto
-API orientativa, independiente de lenguaje. Prefijo sugerido `/api/v1`. JSON UTF-8, timestamps ISO 8601 UTC, UI en zona `America/Montevideo`. La URL y autenticación finales dependen del stack.
+## Base técnica
+ASP.NET Core Web API (`ControllerBase`, `[ApiController]`), JSON por HTTPS, prefijo `/api/v1`. La API es la única puerta de acceso a dominio y MySQL para Blazor y móvil. Versionar cambios incompatibles y publicar OpenAPI.
 
-## 2. Endpoints públicos
-| Método | Ruta | Respuesta |
-|---|---|---|
-| GET | `/sports` | Disciplinas |
-| GET | `/competitions?sport=football` | Lista paginada |
-| GET | `/competitions/{id}/seasons` | Temporadas |
-| GET | `/seasons/{id}/standings` | Tabla si aplica |
-| GET | `/matches?date=YYYY-MM-DD&sport=football&page=1` | Agenda paginada |
-| GET | `/matches/{id}` | Ficha y fuente |
-| GET | `/teams/{id}` | Ficha de equipo |
-| GET | `/articles?page=1` | Noticias publicadas |
-| GET | `/articles/{slug}` | Detalle publicado |
+## Endpoints base
+| Método | Ruta | Público | Función |
+|---|---|---|---|
+| GET | `/api/v1/sports` | Sí | Deportes y videojuegos asociados |
+| GET | `/api/v1/competitions` | Sí | Listado con filtros |
+| GET | `/api/v1/competitions/{id}` | Sí | Ficha de competición |
+| GET | `/api/v1/competitions/{id}/seasons` | Sí | Temporadas |
+| GET | `/api/v1/seasons/{id}/standings` | Sí | Tabla calculada cuando aplique |
+| GET | `/api/v1/matches?date=YYYY-MM-DD&sportId=...` | Sí | Agenda y resultados filtrados |
+| GET | `/api/v1/matches/{id}` | Sí | Ficha de partido publicado |
+| GET | `/api/v1/teams/{id}` | Sí | Ficha de equipo |
+| GET | `/api/v1/articles?page=1&pageSize=20` | Sí | Noticias publicadas |
+| GET | `/api/v1/articles/{slug}` | Sí | Detalle editorial |
+| POST | `/api/v1/auth/login` | No | Ingreso según esquema acordado |
+| POST | `/api/v1/auth/logout` | No | Cierre según esquema acordado |
+| POST | `/api/v1/admin/competitions` | Editor/Admin | Crear competencia |
+| POST | `/api/v1/admin/matches` | Editor/Admin | Programar partido |
+| PUT | `/api/v1/admin/matches/{id}/result` | Revisor/Admin | Publicar/corregir resultado |
+| POST | `/api/v1/admin/articles` | Editor/Admin | Crear borrador |
+| POST | `/api/v1/admin/articles/{id}/publish` | Revisor/Admin | Publicar noticia |
+| GET | `/api/v1/admin/audit` | Admin | Historial paginado |
 
-## 3. Endpoints privados
-| Método | Ruta | Rol mínimo |
-|---|---|---|
-| POST | `/admin/competitions` | Editor |
-| POST | `/admin/seasons` | Editor |
-| POST | `/admin/matches` | Editor |
-| PATCH | `/admin/matches/{id}` | Editor |
-| POST | `/admin/matches/{id}/results` | Editor (borrador) |
-| POST | `/admin/results/{id}/approve` | Revisor |
-| POST | `/admin/results/{id}/corrections` | Revisor |
-| POST | `/admin/articles` | Editor |
-| POST | `/admin/articles/{id}/publish` | Revisor |
-| GET | `/admin/audit?entityType=match&entityId=...` | Admin/revisor según política |
-| PATCH | `/admin/users/{id}/roles` | Admin |
+## Contratos generales
+- Respuestas `200`/`201`/`204`; `400` para DTO inválido; `401` no autenticado; `403` sin permiso; `404` no visible/inexistente; `409` versión/estado incompatible; `500` interno sin fuga de detalles.
+- `application/json` en solicitudes y respuestas normales; `application/problem+json` para errores usando `ProblemDetails`.
+- Paginación obligatoria en colecciones: `page`, `pageSize` con límites de servidor y `total` o cursor.
+- Fechas ISO-8601 con zona/UTC; no enviar texto ambiguo como `30/10 21:00`.
+- `status`, `source`, `updatedAt` y `isOfficial` o designación equivalente visibles en DTO públicos donde corresponda.
+- Nombres de campos camelCase; contratos DTO estables y sin entidades EF ni hashes.
 
-## 4. Ejemplo de respuesta de encuentro
-```json
-{
-  "id": "demo-match-001",
-  "sport": "football",
-  "competition": { "id": "demo-league", "name": "Liga de demostración" },
-  "startsAt": "2026-11-07T19:00:00Z",
-  "displayTimeZone": "America/Montevideo",
-  "status": "final",
-  "home": { "id": "team-01", "name": "Equipo A", "score": 2 },
-  "away": { "id": "team-02", "name": "Equipo B", "score": 1 },
-  "source": { "name": "Dataset de demostración", "verified": false },
-  "updatedAt": "2026-11-08T00:00:00Z"
-}
+## Autorización
+Separar `api/v1/admin/*` de lectura pública; aplicar `[Authorize(Policy=...)]` y validación a nivel de recursos cuando corresponda. **CORS no es autenticación.** En Interactive Server, las solicitudes API pueden ejecutarse desde servidor web; para móvil se requiere esquema compatible con cliente remoto, aún por especificar.
+
+## Ejemplo de request
+```http
+PUT /api/v1/admin/matches/42/result
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{"homeScore":2,"awayScore":1,"status":"finished","version":3,"reason":"Acta revisada"}
 ```
-**Importante:** el ejemplo es ficticio y `verified: false` significa no oficial; si el sistema solo publica aprobados, diferenciar aprobación editorial de certificación institucional.
+*El encabezado Bearer es ilustrativo y depende de la decisión final de autenticación; no implica tokens emitidos actualmente.*
 
-## 5. Errores
-Formato propuesto `{ "error": { "code": "VALIDATION_ERROR", "message": "...", "fields": {"homeScore":"..."} } }`. HTTP 400 validación mal formada, 401 sin sesión, 403 sin privilegio, 404 no existe/no visible, 409 versión en conflicto, 422 regla de dominio, 500 error inesperado sin traza expuesta.
-
-## 6. Paginación y filtros
-`page`, `pageSize` con tope server-side, orden whitelist; parámetros validados; no concatenar entradas directamente en SQL. Exponer `total` o `hasNext` según coste.
-
-## 7. Idempotencia, concurrencia y publicación
-PATCH/POST de cambios relevantes incluyen `version` o `If-Match`; cambios en resultados/versiones generan auditoría transaccional. Publicar dos veces no debe duplicar resultado. Documentar permisos y respuesta por endpoint en OpenAPI si se elige API separada.
+## Testing obligatorio
+Para cada endpoint: happy path, validación, 401, 403, 404, 409 y serialización; ejecutar consultas a través de HTTP, no directamente al servicio desde Blazor.

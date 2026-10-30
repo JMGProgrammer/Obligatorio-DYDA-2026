@@ -1,7 +1,9 @@
 # USER-STORIES — Historias y aceptación
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## Formato
 Cada historia contiene actor, beneficio, criterios en estilo Dado/Cuando/Entonces y dependencia. Los IDs permanecen estables.
@@ -66,3 +68,18 @@ Como admin quiero detectar registros sin fuente y cambios relevantes.
 
 ## Escenarios extremos
 Mismo equipo en local y visitante; marcador negativo; sesión vencida antes de publicar; dos editores cambiando el mismo resultado; partido suspendido; competición sin tabla; noticia con imagen sin autorización; serie esports sin detalle de mapas. Registrar qué comportamiento se espera antes de programar.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Historias transversales de integración
+- **HU-API-01:** Como desarrollador web, quiero consultar resultados con un `HttpClient` de Blazor, para no implementar persistencia en UI. **Aceptación:** no existe referencia a DbContext en Web.
+- **HU-API-02:** Como profesor, quiero solicitar el mismo encuentro desde un cliente HTTP externo, para verificar reutilización de API. **Aceptación:** mismo identificador, estado y resultado JSON.
+- **HU-API-03:** Como desarrollador móvil futuro, quiero leer un OpenAPI y usar DTO estables, para desarrollar en otra tecnología sin reescribir backend. **Aceptación:** rutas, ejemplos y errores documentados.
+- **HU-API-04:** Como revisor, quiero que un resultado editado pase por validaciones C# y auditoría MySQL, para que todos los clientes vean información consistente. **Aceptación:** transacción y error 409 ante versión vencida.

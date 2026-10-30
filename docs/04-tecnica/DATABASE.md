@@ -1,72 +1,70 @@
-# DATABASE — Modelo relacional preliminar
+# DATABASE | Modelo relacional MySQL
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
-## 1. Objetivo y límites
-Proponer entidades normalizadas, PK/FK, unicidad, reglas y datos de ejemplo para MER/DER. El esquema final requiere elegir motor y formato de competiciones. **No es SQL ejecutable definitivo.**
+## 1. Propósito
+MySQL es **la única base de datos operativa** para API, web y futuro móvil. Las aplicaciones cliente no gestionan su propia copia autoritativa. La persistencia se encapsula en Infrastructure.
 
-## 2. Catálogo de entidades
-| Tabla | Clave y campos | Relaciones/restricciones |
-|---|---|---|
-| `sport` | `id`, `code`, `name` | code único: football/basketball/esports |
-| `game` | `id`, `name`, `slug` | solo para esports; slug único |
-| `competition` | `id`, `sport_id`, `game_id?`, `name`, `slug`, `format`, `country` | FK sport; esports requiere game; slug contextual único |
-| `season` | `id`, `competition_id`, `label`, `start_at?`, `end_at?`, `rules_json?`, `status` | combinación competencia+label única |
-| `stage` | `id`, `season_id`, `name`, `kind`, `sort_order` | permite liga, grupos, playoffs |
-| `team` | `id`, `name`, `slug`, `type`, `region?`, `logo_asset_id?` | slug contexto único |
-| `season_team` | `season_id`, `team_id`, `seed?` | PK compuesta |
-| `participant` | `id`, `display_name`, `external_ref?` | no exigir datos personales sensibles |
-| `roster_membership` | `id`, `team_id`, `participant_id`, `from_at?`, `to_at?` | vigencia opcional |
-| `match` | `id`, `stage_id`, `home_team_id`, `away_team_id`, `starts_at?`, `status`, `best_of?`, `version` | FKs, equipos distintos, estados válidos |
-| `result` | `id`, `match_id`, `home_score`, `away_score`, `approval_status`, `approved_by?`, `approved_at?` | una versión activa por partido |
-| `match_game` | `id`, `match_id`, `map_name?`, `sequence`, `home_score?`, `away_score?` | detalle esports opcional |
-| `news_article` | `id`, `author_id`, `title`, `slug`, `summary`, `body`, `status`, `published_at?` | slug único, trazabilidad |
-| `article_tag` | `article_id`, `tag_id` | PK compuesta |
-| `tag` | `id`, `name`, `slug` | slug único |
-| `source` | `id`, `name`, `url?`, `source_type`, `accessed_at?`, `license_note?` | fuente de evidencia |
-| `source_link` | `id`, `source_id`, `entity_type`, `entity_id`, `note?` | evaluar integridad de vínculo polimórfico |
-| `user_account` | `id`, `email`, `password_hash`, `active`, `created_at` | email normalizado único |
-| `role` | `id`, `code` | admin/editor/reviewer |
-| `user_role` | `user_id`, `role_id` | PK compuesta |
-| `audit_event` | `id`, `actor_id`, `entity_type`, `entity_id`, `action`, `before_json`, `after_json`, `reason?`, `occurred_at` | inmutable desde UI |
-| `media_asset` | `id`, `path`, `alt`, `credit`, `license`, `uploaded_by` | restringir publicación sin derechos |
-
-## 3. MER simplificado
+## 2. Diagrama conceptual
 ```mermaid
 erDiagram
- SPORT ||--o{ COMPETITION : clasifica
- GAME o|--o{ COMPETITION : define
- COMPETITION ||--o{ SEASON : contiene
- SEASON ||--o{ STAGE : divide
- SEASON ||--o{ SEASON_TEAM : registra
- TEAM ||--o{ SEASON_TEAM : participa
- STAGE ||--o{ MATCH : programa
- TEAM ||--o{ MATCH : participa
- MATCH ||--o| RESULT : tiene
- MATCH ||--o{ MATCH_GAME : detalla
- USER_ACCOUNT ||--o{ NEWS_ARTICLE : redacta
- USER_ACCOUNT ||--o{ AUDIT_EVENT : realiza
+  SPORT ||--o{ COMPETITION : groups
+  GAME ||--o{ COMPETITION : used_by
+  COMPETITION ||--o{ SEASON : contains
+  SEASON ||--o{ MATCH : schedules
+  TEAM ||--o{ MATCH : home
+  TEAM ||--o{ MATCH : away
+  TEAM ||--o{ TEAM_SEASON : registers
+  SEASON ||--o{ TEAM_SEASON : enrolls
+  MATCH ||--o{ MATCH_EVENT : has
+  MATCH ||--o{ RESULT_REVISION : audit
+  SOURCE ||--o{ MATCH : supports
+  USER ||--o{ ARTICLE : authors
+  ARTICLE ||--o{ ARTICLE_SPORT : tagged
+  SPORT ||--o{ ARTICLE_SPORT : categorizes
+  USER ||--o{ AUDIT_LOG : operates
 ```
 
-## 4. Normalización
-1FN: un registro por equipo/temporada, sin arrays de equipos en cadena; 2FN: atributos de relación como seed en tabla intermedia; 3FN: nombre de disciplina solo en `sport`, no duplicarlo en `match`. Reglas de aplicación no reemplazan FK/unique/transaction DB.
+## 3. Entidades iniciales
+| Tabla | Campos clave | Restricciones/notas |
+|---|---|---|
+| `sports` | id, slug, name, kind | kind: traditional/esports; slug único |
+| `games` | id, slug, name | Solo para esports; slug único |
+| `competitions` | id, sport_id, game_id?, name, scope, format | game_id requerido para ciertas competencias esports |
+| `seasons` | id, competition_id, label, start_at, end_at, status, rules_json? | Vigencia y reglamento por temporada |
+| `teams` | id, name, slug, region?, logo_url? | Datos mínimos; no falsificar identidades |
+| `team_seasons` | id, season_id, team_id | índice único `(season_id,team_id)` |
+| `matches` | id, season_id, home_team_id, away_team_id, scheduled_at, status, home_score?, away_score?, best_of?, source_id?, version, published_at?, updated_at | Reglas específicas y claves externas |
+| `match_events` | id, match_id, event_type, minute_or_round?, metadata_json? | Tipo válido según deporte |
+| `result_revisions` | id, match_id, editor_user_id, previous_json, new_json, reason, changed_at | Historial inmutable salvo política de retención |
+| `sources` | id, title, url?, captured_at?, confidence?, attribution | Distinguir fuente verificada vs carga manual |
+| `articles` | id, author_user_id, slug, title, summary, body, status, published_at?, updated_at | No publicar borradores |
+| `article_sports` | article_id, sport_id | PK compuesta |
+| `users` / roles | esquema gestionado por identidad elegida | No guardar password en texto plano |
+| `audit_logs` | id, actor_user_id, action, entity_type, entity_id, occurred_at, details_json | No incluir secretos ni información sensible innecesaria |
 
-## 5. Reglas de consistencia adicionales
-- No guardar un marcador publicado sin sus dos valores y aprobador.
-- `match.stage_id` determina temporada y competencia; validar que ambos equipos figuren en la temporada si aplica.
-- Marcar `result` como histórico en lugar de sobrescribir sin auditoría; definir estrategia versionada al implementar.
-- Esports: `best_of` impar positivo para modalidades sin empates, solo si está documentado.
-- Evitar valores por defecto 0 en estadísticas desconocidas.
+## 4. Reglas relacionales críticas
+- Equipo local y visitante no pueden coincidir. Los dos deben estar habilitados en la temporada, salvo formato especial documentado.
+- La puntuación solo admite valores no negativos y no nulos cuando se publica el resultado final.
+- Un partido `finalizado` no pasa a otro marcador sin corrección justificada, autorización, control de versión y auditoría.
+- `unique(slug)` donde corresponda; índices `(season_id, scheduled_at)`, `(status, published_at)`, `(competition_id, start_at)`; FK con `ON DELETE RESTRICT` cuando hay historial.
+- `version` entero monotónico para concurrencia optimista; incrementarlo atómicamente cuando haya edición válida.
+- Temporadas y reglas pueden condicionar clasificaciones distintas entre fútbol, básquetbol y esports; **no** usar puntos fijos por defecto para los tres.
 
-## 6. Consultas principales
-Próximos partidos ordenados por `starts_at`; resultados finalizados por disciplina; clasificación agregada por equipo; artículos publicados por fecha; resultados sin fuente; eventos de auditoría por entidad; calendario de equipo.
+## 5. Decisiones de tipos y fechas
+Usar `utf8mb4` y collation acordada; `BIGINT` o `CHAR(36)` para IDs según preferencia del curso, de manera uniforme; `DATETIME(6)` en UTC acompañado de contrato claro de zona. MySQL no guarda automáticamente la zona en `DATETIME`, por lo que la convención UTC es explícita. Para JSON flexible usar columnas JSON solo donde no convenga modelar una relación estable.
 
-## 7. Índices sugeridos
-`match(stage_id,starts_at)`, `match(status,starts_at)`, `result(match_id,approval_status)`, `news_article(status,published_at)`, `audit_event(entity_type,entity_id,occurred_at)`, `season(competition_id,label)`.
+## 6. ORM / migraciones
+EF Core + proveedor MySQL es sugerencia; comprobar compatibilidad concreta con la versión de .NET/EF. Aplicar migraciones versionadas de forma reproducible, sin editar tablas manualmente en producción. Semilla con equipos y competencias **ficticios claramente identificados** para demo.
 
-## 8. Dataset de demo
-1 competición sintética por disciplina; al menos 4 equipos en cada una; 6 encuentros de ejemplo por torneo, algunos programados y otros finalizados; 3 artículos; 1 resultado pendiente; 1 corrección auditada. Etiquetar claramente **datos de demostración** y evitar atribuir resultados a entidades reales.
+## 7. Operaciones transaccionales
+Publicar resultado: verificar versión + modificar partido + insertar `result_revisions` + `audit_logs` dentro de transacción. Si falla cualquiera, revertir todo. No permitir que Blazor llame a `DbContext`.
 
-## 9. Pendientes de diseño
-Tabla de fases esports por brackets; categorías masculinas/femeninas/formativas si se cubren; sedes; participantes individuales; jurisdicción de slugs; regla de desempate por competición; esquema de fuente tipada (preferible a vínculo polimórfico en diseño definitivo).
+## 8. Consultas/reportes
+Agenda por deporte y fecha, partidos por temporada, clasificaciones derivadas de resultados aprobados, noticias por fecha, pendientes de revisión, historial de correcciones. Priorizar índices y paginación. La tabla de posiciones es vista calculada/servicio de dominio, no un dato editado arbitrariamente.
+
+## 9. DDL y DER finales
+El diagrama es **preliminar**, no una migración ejecutada. Confirmar con profesor detalles de participantes individuales, género/categorías, fixture, esports al mejor de N y reglas de desempate antes de cerrar DDL.

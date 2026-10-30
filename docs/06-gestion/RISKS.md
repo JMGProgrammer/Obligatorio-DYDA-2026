@@ -1,7 +1,9 @@
 # RISKS — Riesgos y mitigación
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## Matriz de riesgos (estimación de planificación)
 Escala probabilidad/impacto: bajo, medio, alto; revisarla en reuniones.
@@ -26,3 +28,23 @@ Más pantallas que flujos completos; datos copiando fuentes sin procedencia; dis
 
 ## Plan de contingencia
 Congelar P1/P2; demostrar contenido sintético claro; simplificar número de competiciones sin borrar disciplinas; priorizar publicación/consulta y trazabilidad. Escalar a docentes si una rúbrica contradice alcance.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Riesgos específicos del stack
+| Riesgo | Impacto | Mitigación |
+|---|---|---|
+| Blazor intenta conectarse a MySQL directo | Rompe reutilización móvil | Revisión de referencias y prueba API externa |
+| Incompatibilidad EF Core/proveedor MySQL/.NET | Bloquea desarrollo | Validar matriz de compatibilidad en H0 |
+| Confusión Razor Pages vs Blazor Web App | Arquitectura errónea | Confirmar plantilla de proyecto con docente |
+| Autenticación de Web no funciona en móvil | Retrabajo | Diseñar frontera API y auth independiente de navegador |
+| CORS incorrecto | Fallos de entorno | Configurar orígenes reales; diferenciar Server vs WASM |
+| API inaccesible desde dispositivo móvil | Imposibilita demo futura | HTTPS y host accesible; no usar `localhost` de PC |
+| Resultados ficticios confundidos con oficiales | Reputación | Etiquetas de demo y fuentes |

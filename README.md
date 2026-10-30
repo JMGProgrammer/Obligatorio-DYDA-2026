@@ -1,58 +1,79 @@
-<p align="center">
-  <img src="assets/Reporteros-banner.png" alt="REPORTEROS — Centro de información deportiva uruguaya" width="100%">
-</p>
+# REPORTEROS | Documentación integral v2
 
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+## Objetivo
+REPORTEROS reúne la información del deporte uruguayo: **fútbol, básquetbol y esports**, con especial atención al ecosistema de AUDV cuando existan datos y permisos verificables. El nombre une **reporteros** y **teros** (ave nacional). Es una plataforma editorial e informativa, no una herramienta de inscripción de torneos.
 
-## Resumen
-**REPORTEROS** une la idea de *reporteros* con el *tero*, ave nacional del Uruguay. Su objetivo es brindar un lugar común para consultar competiciones, calendario, resultados, clasificaciones, equipos, participantes y noticias del fútbol, básquetbol y esports uruguayos. En esports se contempla la cobertura de competiciones relacionadas con el ecosistema AUDV, sin atribuir vínculos oficiales.
+## Arquitectura obligatoria del trabajo integrador
+```mermaid
+flowchart LR
+  U[Usuarios web] --> B[Blazor Web App - .NET]
+  B -->|HTTP/JSON| A[ASP.NET Core Web API - C#]
+  M[Cliente móvil futuro] -->|HTTP/JSON| A
+  A --> S[Servicios / dominio]
+  S --> R[Repositorios / EF Core]
+  R --> D[(MySQL)]
+```
+**Regla esencial:** Blazor y móvil **no consultan MySQL directamente**. Toda escritura, autorización, validación y regla de negocio reside detrás de la API. La API es el contrato estable entre materias. Blazor no debe replicar reglas del servidor.
 
-**Eslogan propuesto:** «El deporte uruguayo tiene quien lo cuente.» **Identidad propuesta:** Sports Editorial / Dark Tech; azul noche, celeste y blanco.
+## Decisiones cerradas y pendientes
+| Elemento | Estado |
+|---|---|
+| Marca | REPORTEROS |
+| Alcance temático | Fútbol, básquetbol, esports uruguayos |
+| Backend | ASP.NET Core Web API en C# |
+| Base de datos | MySQL |
+| Aplicación web | Blazor Web App (componentes Razor `.razor`), consumidora HTTP de la API |
+| Cliente móvil | Integración futura; tecnología móvil no definida |
+| ORM | EF Core + proveedor MySQL **propuesto**, sujeto a compatibilidad de versiones |
+| Renderizado Blazor | Interactive Server **recomendado**, sujeto a aprobación |
+| Auth | ASP.NET Core Identity / tokens o cookies según frontera, decisión por cerrar |
+| Competiciones y proveedores de datos | Pendiente de selección y validación |
 
-## Alcance inicial
-- Portal público, búsqueda y filtros; noticias; calendario y detalles de encuentros.
-- Competencias, equipos y participantes con información curada.
-- Marcadores finales y clasificaciones verificadas cuando el formato lo admita.
-- Panel privado de carga, revisión, publicación y corrección de datos.
-- No prometer marcadores automáticos en vivo ni información oficial sin convenio o fuente acreditada.
+**Terminología:** en la conversación se indicó «Blazor Pages». La especificación adopta **Blazor Web App con páginas de componentes Razor**, no el framework separado **ASP.NET Core Razor Pages** (`.cshtml`). Confirmar este matiz con el profesor.
 
-## Índice de la documentación
-| Área | Documento | Propósito |
-|---|---|---|
-| Producto | [OVERVIEW](docs/01-producto/OVERVIEW.md) | Visión, problema, usuarios y propuesta de valor |
-| Producto | [SCOPE](docs/01-producto/SCOPE.md) | MVP, exclusiones y fases |
-| Producto | [STAKEHOLDERS](docs/01-producto/STAKEHOLDERS.md) | Interesados, escenarios y validaciones |
-| Requisitos | [REQUIREMENTS](docs/02-requisitos/REQUIREMENTS.md) | Requisitos identificables y medibles |
-| Requisitos | [USER-STORIES](docs/02-requisitos/USER-STORIES.md) | Historias y criterios de aceptación |
-| Requisitos | [BUSINESS-RULES](docs/02-requisitos/BUSINESS-RULES.md) | Reglas deportivas, editoriales y permisos |
-| Diseño | [DESIGN](docs/03-diseno/DESIGN.md) | UI, identidad aplicada y accesibilidad |
-| Diseño | [INFORMATION-ARCHITECTURE](docs/03-diseno/INFORMATION-ARCHITECTURE.md) | Navegación, pantallas y flujos |
-| Técnica | [TECH-STACK](docs/04-tecnica/TECH-STACK.md) | Alternativas y decisiones pendientes |
-| Técnica | [ARCHITECTURE](docs/04-tecnica/ARCHITECTURE.md) | Componentes, capas, seguridad y datos |
-| Técnica | [DATABASE](docs/04-tecnica/DATABASE.md) | Modelo lógico relacional preliminar |
-| Técnica | [API](docs/04-tecnica/API.md) | Contratos HTTP propuestos |
-| Técnica | [DATA-SOURCES](docs/04-tecnica/DATA-SOURCES.md) | Procedencia, calidad y trazabilidad |
-| Técnica | [SECURITY](docs/04-tecnica/SECURITY.md) | Autenticación, autorización y amenazas |
-| Calidad | [TEST-PLAN](docs/05-calidad/TEST-PLAN.md) | Pruebas funcionales, seguridad y aceptación |
-| Calidad | [QUALITY](docs/05-calidad/QUALITY.md) | Requisitos no funcionales y Definition of Done |
-| Gestión | [ROADMAP](docs/06-gestion/ROADMAP.md) | Hitos, dependencias y entregables |
-| Gestión | [TEAM-WORKFLOW](docs/06-gestion/TEAM-WORKFLOW.md) | Git, responsables, reuniones y decisiones |
-| Gestión | [RISKS](docs/06-gestion/RISKS.md) | Riesgos y mitigaciones |
-| Gestión | [DECISIONS](docs/06-gestion/DECISIONS.md) | Registro de decisiones y pendientes |
-| Gestión | [ITERATION-PLAN](docs/ITERATION-PLAN.md) | Plan de iteraciones I0–I7 con gates |
-| Gestión | [CHANGELOG](CHANGELOG.md) | Registro de cambios significativos por hito |
-| Gestión | [DEVELOPMENT-RULES](docs/DEVELOPMENT-RULES.md) | Versionado por hito/iteración/fix y reglas de desarrollo |
-| Identidad | [BRANDING](docs/07-identidad/BRANDING.md) | Manual operativo de marca |
-| Identidad | [Master](docs/07-identidad/MASTER-BRANDING-Y-PRODUCTO.md) | Documento original consolidado |
+## Índice documental
+- [OVERVIEW.md](docs/01-producto/OVERVIEW.md)
+- [SCOPE.md](docs/01-producto/SCOPE.md)
+- [STAKEHOLDERS.md](docs/01-producto/STAKEHOLDERS.md)
+- [BUSINESS-RULES.md](docs/02-requisitos/BUSINESS-RULES.md)
+- [REQUIREMENTS.md](docs/02-requisitos/REQUIREMENTS.md)
+- [USER-STORIES.md](docs/02-requisitos/USER-STORIES.md)
+- [DESIGN.md](docs/03-diseno/DESIGN.md)
+- [INFORMATION-ARCHITECTURE.md](docs/03-diseno/INFORMATION-ARCHITECTURE.md)
+- [API-CONTRACTS.md](docs/04-tecnica/API-CONTRACTS.md)
+- [API.md](docs/04-tecnica/API.md)
+- [ARCHITECTURE.md](docs/04-tecnica/ARCHITECTURE.md)
+- [AUTHENTICATION.md](docs/04-tecnica/AUTHENTICATION.md)
+- [BLAZOR.md](docs/04-tecnica/BLAZOR.md)
+- [DATA-SOURCES.md](docs/04-tecnica/DATA-SOURCES.md)
+- [DATABASE.md](docs/04-tecnica/DATABASE.md)
+- [DEPLOYMENT.md](docs/04-tecnica/DEPLOYMENT.md)
+- [MOBILE-INTEGRATION.md](docs/04-tecnica/MOBILE-INTEGRATION.md)
+- [PROJECT-STRUCTURE.md](docs/04-tecnica/PROJECT-STRUCTURE.md)
+- [SECURITY.md](docs/04-tecnica/SECURITY.md)
+- [TECH-STACK.md](docs/04-tecnica/TECH-STACK.md)
+- [QUALITY.md](docs/05-calidad/QUALITY.md)
+- [TEST-PLAN.md](docs/05-calidad/TEST-PLAN.md)
+- [DECISIONS.md](docs/06-gestion/DECISIONS.md)
+- [RISKS.md](docs/06-gestion/RISKS.md)
+- [ROADMAP.md](docs/06-gestion/ROADMAP.md)
+- [TEAM-WORKFLOW.md](docs/06-gestion/TEAM-WORKFLOW.md)
+- [BRANDING.md](docs/07-identidad/BRANDING.md)
+- [MASTER-BRANDING-Y-PRODUCTO.md](docs/07-identidad/MASTER-BRANDING-Y-PRODUCTO.md)
 
-## Inicio recomendado
-1. Acordar con la docencia el MVP y las competiciones de muestra.
-2. Formalizar reglas para resultados, fuentes y clasificación por disciplina.
-3. Aprobar stack y esquema de datos.
-4. Construir un flujo vertical: crear competición → registrar equipo → programar encuentro → cargar y aprobar resultado → visualizarlo públicamente.
-5. Incorporar noticias, búsqueda, estadísticas y cobertura de otras disciplinas.
+## Cómo arrancar
+1. Seleccionar la versión .NET disponible en clases y comprobar un proveedor MySQL compatible.
+2. Crear solución con proyectos `Reporteros.Api`, `Reporteros.Application`, `Reporteros.Domain`, `Reporteros.Infrastructure`, `Reporteros.Contracts` y `Reporteros.Web`; pruebas aparte.
+3. Levantar MySQL, crear una migración inicial y sembrar información de demostración.
+4. Implementar API de competiciones y partidos, publicar `/openapi` o equivalente.
+5. Configurar un `HttpClient` tipado en Blazor y demostrar que la web consume **la API**.
+6. Completar resultados y noticias, perfiles, permisos y pruebas.
+7. Demostrar desde un segundo cliente HTTP el uso de los mismos endpoints para acreditar reutilización móvil.
 
-## Convenciones
-Las funciones marcadas **MVP** son objetivos propuestos, no compromisos aprobados; **Fase 2** y **Futuro** no son requisitos de entrega. Todos los partidos/equipos de las demostraciones deben estar identificados como ficticios si no existe fuente verificable. Prohibido presentar a REPORTEROS como socio de AUF, FUBB o AUDV sin evidencia.
+## Criterio de éxito transversal
+Una corrección autorizada de resultado realizada por la API actualiza la información que obtiene Blazor y que obtendrá un cliente móvil, sin duplicar consultas SQL, validaciones ni fórmulas de posiciones en cada frontend.

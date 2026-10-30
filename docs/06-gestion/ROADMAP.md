@@ -1,7 +1,9 @@
 # ROADMAP — Plan de implementación
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## Plan por hitos, no por fechas inventadas
 Las duraciones se ajustarán a calendario del obligatorio, cargas del equipo y feedback docente. Cada hito tiene salida demostrable y puerta de calidad.
@@ -32,3 +34,26 @@ Clasificaciones requieren resultado confirmado y regla por temporada; detalle p�
 
 ## Demostración sugerida
 1. Visitante consulta encuentros. 2. Editor entra al panel y propone resultado. 3. Revisor lo aprueba. 4. Público lo ve reflejado en tabla. 5. Revisor corrige con motivo. 6. Auditoría conserva antes/después. 7. Mostrar serie esports y noticia.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Secuencia vertical obligatoria para evitar duplicar lógica
+| Hito | Entregable verificable | Dependencias |
+|---|---|---|
+| H0 | Versión .NET/proveedor MySQL confirmados; solución creada | Docentes y entorno |
+| H1 | MySQL + migración inicial + API `GET /sports` | H0 |
+| H2 | API de competiciones/partidos con JSON/OpenAPI y pruebas | H1 |
+| H3 | Blazor lista/filtra partidos mediante `HttpClient` | H2 |
+| H4 | Auth y administración de resultados con auditoría | H3 |
+| H5 | Noticias y fichas con DTO; clasificaciones validadas | H4 |
+| H6 | Evidencia cliente HTTP independiente como futuro móvil | H5 |
+| H7 | Tests, documentación, demo, backup y presentación | H6 |
+
+No intentar comenzar por todas las pantallas con datos hardcodeados: entregar primero un flujo entero MySQL → API → Blazor, luego ampliar. Los hitos no tienen fechas inventadas.

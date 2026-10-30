@@ -1,7 +1,9 @@
 # SCOPE — Alcance, MVP y prioridades
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## 1. Criterio de selección
 El MVP debe demostrar valor como **centro de información**, no convertirse en una plataforma de organización federativa. Priorizar los recorridos completos sobre listas largas de pantallas vacías.
@@ -34,3 +36,15 @@ Si los tiempos se reducen: mantener un solo formato clasificatorio completamente
 
 ## 7. Límites y dependencias
 El dato inicial puede ser ficticio para demostración si se identifica como tal. La cobertura real depende de disponibilidad y permisos. El alcance definitivo requiere aprobación docente y confirmación del calendario académico.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Límites tecnológicos del MVP
+**Incluye:** API ASP.NET Core, DB MySQL, UI Blazor, clientes HTTP, pruebas de integración y documentación OpenAPI. **Excluye:** React como frontend principal, Node como backend, SQL Server como fuente, acceso directo del móvil a MySQL, app móvil obligatoria, resultados realmente en vivo sin proveedor. La compatibilidad móvil se verifica con cliente HTTP independiente.

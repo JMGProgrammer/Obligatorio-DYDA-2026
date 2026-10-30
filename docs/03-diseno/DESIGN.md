@@ -1,7 +1,9 @@
 # DESIGN — Interfaz y dirección de arte
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## 1. Identidad
 REPORTEROS se presenta con **Sports Editorial / Dark Tech**: editorial deportivo contemporáneo, legibilidad de marcador y guiños uruguayos mediante tero y celeste. No imitar escudos oficiales. Se inspiran las pantallas en las siete imágenes de referencia entregadas por el equipo, sin tratarlas como diseños finales ni copiar elementos de terceros.
@@ -42,3 +44,15 @@ Tono breve, informativo, uruguayo moderado. Ejemplos: «No hay encuentros regist
 
 ## 8. Figma/prototipo pendiente
 Entregables recomendados: portada desktop/mobile, listado de encuentros, detalle, tabla, noticia, esports/serie y flujo de publicación admin; estados vacío, error y carga; biblioteca de componentes con variantes.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Diseño funcional Blazor
+Páginas con `@page` en componentes `.razor` y `@rendermode` según necesidades; navbar, tarjetas, filtros y tablas como componentes compartidos. Un `ApiClient` por agregado consume JSON. Cada pantalla contempla carga, vacío, error/red y éxito. Backoffice con `EditForm` + validación de UI, pero autorización y reglas en API. **No** utilizar `@inject ReporterosDbContext` en componentes.

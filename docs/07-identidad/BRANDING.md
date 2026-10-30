@@ -1,7 +1,9 @@
 # BRANDING — Manual operativo de identidad
 
-> **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
-> **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
+> **REPORTEROS — Centro de información deportiva uruguaya**  
+> Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
+> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
 
 ## 1. Marca y significado
 Nombre definitivo elegido: **REPORTEROS**, lectura dual *reporteros* + *teros*, ave nacional. Escritura institucional: Reporteros; wordmark: REPORTEROS. Descriptor: **Centro de información deportiva uruguaya**. Identidad nacional sin atribuciones federativas ni uso de escudos oficiales.
@@ -63,3 +65,15 @@ No estirar logo; no alterar proporciones; no añadir símbolos oficiales; no usa
 
 ## 10. Validaciones pendientes
 Disponibilidad DNPI y dominios/handles; aprobación del boceto vectorial; contraste de versiones reales; derechos de imagen; eslogan definitivo. **Consultar el documento maestro** para fundamentación ampliada de naming y tono.
+
+
+## Integración académica y reglas de arquitectura obligatorias (v2)
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
+- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
+- Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
+
+
+## Integración de branding a Blazor
+Definir variables CSS reutilizables en `wwwroot/css`, componentes `.razor` y guías de iconografía; la API entrega **contenido** (resultado, estado, procedencia) y no clases CSS. El color por estado y los layouts viven solo en Web; la app móvil futura adopta identidad visual sin acoplarse al código Blazor.
