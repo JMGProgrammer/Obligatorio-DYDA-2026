@@ -2,8 +2,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## Estado
 C# y ASP.NET Core están cerrados; **el mecanismo de sesión concreto se decide durante implementación** según conocimientos y evaluación docente. El diseño debe admitir hoy una web Blazor y luego un cliente móvil remoto.

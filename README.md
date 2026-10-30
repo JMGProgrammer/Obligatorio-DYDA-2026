@@ -6,8 +6,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: monorepo base inicializado con .NET 10; persistencia y funcionalidades pendientes.
 
 ## Objetivo
 REPORTEROS reúne la información del deporte uruguayo: **fútbol, básquetbol y esports**, con especial atención al ecosistema de AUDV cuando existan datos y permisos verificables. El nombre une **reporteros** y **teros** (ave nacional). Es una plataforma editorial e informativa, no una herramienta de inscripción de torneos.
@@ -17,7 +17,7 @@ REPORTEROS reúne la información del deporte uruguayo: **fútbol, básquetbol y
 flowchart LR
   U[Usuarios web] --> B[Blazor Web App - .NET]
   B -->|HTTP/JSON| A[ASP.NET Core Web API - C#]
-  M[Cliente móvil futuro] -->|HTTP/JSON| A
+  M[Expo + React Native] -->|HTTP/JSON| A
   A --> S[Servicios / dominio]
   S --> R[Repositorios / EF Core]
   R --> D[(MySQL)]
@@ -32,9 +32,9 @@ flowchart LR
 | Backend | ASP.NET Core Web API en C# |
 | Base de datos | MySQL |
 | Aplicación web | Blazor Web App (componentes Razor `.razor`), consumidora HTTP de la API |
-| Cliente móvil | Integración futura; tecnología móvil no definida |
+| Cliente móvil | Expo + React Native, validado en desarrollo con Expo Go; se implementará al final |
 | ORM | EF Core + proveedor MySQL **propuesto**, sujeto a compatibilidad de versiones |
-| Renderizado Blazor | Interactive Server **recomendado**, sujeto a aprobación |
+| Renderizado Blazor | Interactive Server |
 | Auth | ASP.NET Core Identity / tokens o cookies según frontera, decisión por cerrar |
 | Competiciones y proveedores de datos | Pendiente de selección y validación |
 
@@ -70,14 +70,60 @@ flowchart LR
 - [BRANDING.md](docs/07-identidad/BRANDING.md)
 - [MASTER-BRANDING-Y-PRODUCTO.md](docs/07-identidad/MASTER-BRANDING-Y-PRODUCTO.md)
 
-## Cómo arrancar
-1. Seleccionar la versión .NET disponible en clases y comprobar un proveedor MySQL compatible.
-2. Crear solución con proyectos `Reporteros.Api`, `Reporteros.Application`, `Reporteros.Domain`, `Reporteros.Infrastructure`, `Reporteros.Contracts` y `Reporteros.Web`; pruebas aparte.
-3. Levantar MySQL, crear una migración inicial y sembrar información de demostración.
-4. Implementar API de competiciones y partidos, publicar `/openapi` o equivalente.
-5. Configurar un `HttpClient` tipado en Blazor y demostrar que la web consume **la API**.
-6. Completar resultados y noticias, perfiles, permisos y pruebas.
-7. Demostrar desde un segundo cliente HTTP el uso de los mismos endpoints para acreditar reutilización móvil.
+## Estructura del monorepo
+
+```text
+Reporteros.sln
+├── src/
+│   ├── Reporteros.Api/     # HTTP, servicios, modelos y acceso a datos
+│   └── Reporteros.Web/     # Blazor Web App; consume la API por HTTP
+├── mobile/                 # Expo + React Native (última etapa)
+├── docs/
+└── assets/
+```
+
+La solución `.NET` contiene únicamente `Reporteros.Api` y `Reporteros.Web`. El cliente móvil no forma parte de `Reporteros.sln`; comparte exclusivamente el contrato HTTP/JSON.
+
+## Desarrollo local
+
+### Requisitos
+
+- .NET SDK 10 (el rango compatible está fijado en `global.json`).
+- Git.
+- MySQL se incorporará al comenzar persistencia.
+
+### Restaurar y compilar
+
+```bash
+dotnet restore Reporteros.sln
+dotnet build Reporteros.sln
+```
+
+### Ejecutar
+
+En dos terminales:
+
+```bash
+dotnet run --project src/Reporteros.Api
+dotnet run --project src/Reporteros.Web
+```
+
+| Servicio | HTTP | HTTPS |
+|---|---|---|
+| API | `http://localhost:5279` | `https://localhost:7045` |
+| Web | `http://localhost:5188` | `https://localhost:7189` |
+
+Comprobación rápida de la API:
+
+```bash
+curl http://localhost:5279/health
+```
+
+OpenAPI está disponible en desarrollo en `/openapi/v1.json`. La URL local que usa Blazor se configura mediante `Api:BaseUrl` en `src/Reporteros.Web/appsettings.json` y puede sobrescribirse por ambiente.
+
+## Primer corte funcional
+
+Implementar una vertical completa de competiciones: controlador API → servicio → datos → DTO JSON → `ReporterosApiClient` → componente Blazor. Después repetir el patrón para partidos, noticias y administración.
 
 ## Criterio de éxito transversal
 Una corrección autorizada de resultado realizada por la API actualiza la información que obtiene Blazor y que obtendrá un cliente móvil, sin duplicar consultas SQL, validaciones ni fórmulas de posiciones en cada frontend.

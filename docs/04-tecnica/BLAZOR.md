@@ -2,14 +2,14 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## Modelo elegido
-**Blazor Web App** con páginas `.razor`, componentes reutilizables y modo **Interactive Server recomendado**. La expresión coloquial «Blazor Pages» se implementa aquí como páginas de componentes; **no** se sustituye por ASP.NET Core Razor Pages `.cshtml`.
+**Blazor Web App** con páginas `.razor`, componentes reutilizables y modo **Interactive Server**. La expresión coloquial «Blazor Pages» se implementa aquí como páginas de componentes; **no** se sustituye por ASP.NET Core Razor Pages `.cshtml`.
 
 ## Regla de separación
-`Reporteros.Web` no referencia `Reporteros.Infrastructure`, no contiene `DbContext`, ni cadenas de conexión a MySQL. Todas las lecturas/escrituras de información deportiva van a `Reporteros.Api` mediante `HttpClient` tipado.
+`Reporteros.Web` no referencia `Reporteros.Api`, no contiene `DbContext` ni cadenas de conexión a MySQL. Todas las lecturas/escrituras de información deportiva van a `Reporteros.Api` mediante clientes `HttpClient` tipados. La base URL se obtiene de `Api:BaseUrl`; nunca se codifica dentro de componentes.
 
 ## Componentes/rutas
 | Ruta | Página `.razor` | Servicio API |

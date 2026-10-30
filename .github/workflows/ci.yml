@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-dotnet:
+    name: Build .NET
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Reporteros.sln
+
+      - name: Verify formatting
+        run: dotnet format Reporteros.sln --no-restore --verify-no-changes
+
+      - name: Build
+        run: dotnet build Reporteros.sln --no-restore --configuration Release --nologo

@@ -2,8 +2,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## Decisiones acordadas
 | ID | Tema | Estado | Resolución | Justificación |
@@ -35,19 +35,28 @@
 ## Integración académica y reglas de arquitectura obligatorias (v2)
 - La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
 - La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
-- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El cliente móvil Expo + React Native reutiliza esos endpoints. El cliente no necesita conocer tablas ni clases Entity Framework.
 - El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
 - Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
 
 
 ## ADR-016 — Stack académico fijado (APROBADO POR EL EQUIPO)
-- **Decisión:** API ASP.NET Core/C#, MySQL, web Blazor Web App, móvil futuro consumidor de API.
+- **Decisión:** API ASP.NET Core/C# sobre .NET 10, MySQL, web Blazor Web App y móvil Expo + React Native consumidor de API.
 - **Contexto:** integración entre materias; lógica única compartida; contenidos enseñados en curso.
 - **Consecuencia:** se descartan alternativas React/Node/SQL Server del documento anterior; API-first y solución .NET.
-- **Aún pendientes:** versión .NET, proveedor MySQL/ORM, modo de hosting Blazor, esquema de auth, competiciones y datos.
+- **Aún pendientes:** proveedor MySQL/ORM, esquema de auth, competiciones y datos.
 
-## ADR-017 — Modo de renderizado Blazor (PENDIENTE)
-Blazor Web App + Interactive Server, manteniendo peticiones HTTP a API separada; aprobar con docencia.
+## ADR-017 — Modo de renderizado Blazor (APROBADO POR EL EQUIPO)
+Blazor Web App + Interactive Server, manteniendo peticiones HTTP a API separada. La aplicación base fue generada con este modo.
 
 ## ADR-018 — Estrategia de acceso a datos (PENDIENTE)
 EF Core y migraciones si existe proveedor compatible con la versión del SDK de la materia; alternativa de repositorios ADO.NET con scripts versionados si lo exigen.
+
+## ADR-019 — Monorepo simplificado (APROBADO POR EL EQUIPO)
+- **Decisión:** mantener un único repositorio con una solución clásica `Reporteros.sln` que contiene solo `Reporteros.Api` y `Reporteros.Web`; `mobile/`, documentación y recursos conviven fuera de la solución.
+- **Contexto:** el equipo conoce una organización API por carpetas (`Controllers`, `Services`, `DTOs`, `Models`) y prioriza una curva de aprendizaje gradual.
+- **Consecuencia:** no se crean proyectos separados Domain/Application/Infrastructure/Contracts. Los límites se aplican mediante estructura, revisión de PR y reglas documentadas. Si el proyecto crece, las carpetas pueden extraerse a proyectos sin cambiar el contrato HTTP.
+
+## ADR-020 — Cliente móvil Expo + React Native (APROBADO POR EL EQUIPO)
+- **Decisión:** implementar el cliente móvil al final con Expo + React Native y utilizar Expo Go durante desarrollo.
+- **Consecuencia:** `mobile/` permanece aislado de `Reporteros.sln`, no referencia código C# y consume únicamente endpoints HTTP/JSON documentados por OpenAPI.

@@ -2,8 +2,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## Equipo
 Juan Meny · Mateo Rilla · Facundo Villalba. La asignación efectiva de tareas **aún no está acordada**: evitar asignaciones ficticias o suponer liderazgo sin decisión de los integrantes.
@@ -17,16 +17,18 @@ Tres frentes rotativos: experiencia web, lógica/API y datos/calidad. Cada módu
 ## 3. Ciclo semanal adaptable
 Planificación con 3 resultados concretos; check-in breve; demo interna de progreso; revisión de riesgos y deuda; actualización de tablero. No acumular toda la integración para el cierre.
 
-## 4. Estructura sugerida repositorio
+## 4. Estructura del monorepo
 ```text
 reporteros/
+├── Reporteros.sln
 ├── README.md
 ├── docs/
-├── src/                # adaptar al stack
-├── tests/
-├── database/           # migraciones + seeds
+├── src/
+│   ├── Reporteros.Api/
+│   └── Reporteros.Web/
+├── mobile/             # Expo + React Native, última etapa
 ├── assets/             # recursos con licencia
-├── .env.example        # nunca secretos
+├── .github/workflows/  # integración continua
 └── .gitignore
 ```
 
@@ -41,9 +43,9 @@ Problema técnico bloqueante se documenta con reproducción mínima y propuestas
 
 
 ## Integración académica y reglas de arquitectura obligatorias (v2)
-- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
+- La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; organiza controladores, servicios, DTOs, modelos y acceso a datos dentro de un solo proyecto.
 - La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
-- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El cliente móvil Expo + React Native reutiliza esos endpoints. El cliente no necesita conocer tablas ni clases Entity Framework.
 - El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
 - Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
 

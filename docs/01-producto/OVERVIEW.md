@@ -2,8 +2,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## 1. Problema y oportunidad
 La información deportiva uruguaya se publica en diversos medios, redes sociales, sitios de federaciones y comunidades. Para seguir fútbol, básquetbol y esports puede ser necesario consultar varias fuentes, con formatos heterogéneos, escasa trazabilidad o diferencias en actualización. Este es el **problema planteado por el equipo**; debe validarse con entrevistas y revisión de fuentes, no presentarse como estudio demostrado.
@@ -43,7 +43,7 @@ Qué torneos se incluirán; fuentes y derechos de uso; datos disponibles para es
 ## Integración académica y reglas de arquitectura obligatorias (v2)
 - La **API ASP.NET Core (C#)** es dueña del negocio, los permisos, las reglas de publicación y los reportes; gestiona MySQL desde una capa de infraestructura.
 - La interfaz **Blazor Web App** no abre conexiones MySQL ni calcula resultados oficiales por cuenta propia; consume DTO JSON por HTTP, incluso en administración.
-- El cliente móvil futuro reutiliza esos endpoints con la tecnología que determine su materia. El cliente no necesita conocer tablas ni clases Entity Framework.
+- El cliente móvil Expo + React Native reutiliza esos endpoints. El cliente no necesita conocer tablas ni clases Entity Framework.
 - El MVP puede demostrarse con datos ficticios rotulados y carga editorial manual; noticias/resultados oficiales o en vivo solo con fuente verificable.
 - Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
 

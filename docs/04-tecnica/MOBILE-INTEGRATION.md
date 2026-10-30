@@ -2,17 +2,17 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## 1. Objetivo académico
-En Desarrollo Móvil, crear un cliente con tecnología que se establezca en esa materia. Consumirá **la misma ASP.NET Core Web API** y **la misma base MySQL indirectamente**; no duplicará lógica ni tablas. La app móvil **no forma parte del MVP web comprometido**, salvo indicación docente posterior.
+En Desarrollo Móvil se creará un cliente con **Expo + React Native**, validado durante desarrollo mediante Expo Go. Consumirá **la misma ASP.NET Core Web API** y **la misma base MySQL indirectamente**; no duplicará lógica ni tablas. La app móvil se implementará después de consolidar API y Web y **no forma parte del MVP web comprometido**, salvo indicación docente posterior.
 
 ```mermaid
 sequenceDiagram
-  participant M as App móvil (futura)
+  participant M as Expo / React Native
   participant A as ASP.NET Core API
-  participant S as Application/Domain
+  participant S as Servicios de API
   participant D as MySQL
   M->>A: GET /api/v1/matches?date=...
   A->>S: Consultar partidos públicos

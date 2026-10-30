@@ -1,10 +1,20 @@
 using Reporteros.Web.Components;
+using Reporteros.Web.Services.ApiClients;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var apiBaseUrl = builder.Configuration["Api:BaseUrl"]
+    ?? throw new InvalidOperationException("La configuración Api:BaseUrl es obligatoria.");
+
+builder.Services.AddHttpClient<ReporterosApiClient>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 

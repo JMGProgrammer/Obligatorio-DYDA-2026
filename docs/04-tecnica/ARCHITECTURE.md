@@ -2,8 +2,8 @@
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  
 > Equipo: Juan Meny · Mateo Rilla · Facundo Villalba  
-> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · cliente móvil futuro vía HTTP/JSON.  
-> Estado: especificación de trabajo; confirmar versión .NET y exigencias de la docencia.
+> **Stack confirmado por el equipo:** ASP.NET Core Web API (C#) · MySQL · Blazor Web App (.NET) · Expo + React Native (Expo Go) vía HTTP/JSON.
+> Estado: especificación de trabajo; validar exigencias específicas con la docencia.
 
 ## Principio rector
 Un único backend ASP.NET Core concentra la lógica. Blazor es **un consumidor** de la API, al igual que la futura app móvil. Comparten datos, autorizaciones y decisiones de negocio.
@@ -11,14 +11,13 @@ Un único backend ASP.NET Core concentra la lógica. Blazor es **un consumidor**
 ```mermaid
 flowchart TB
   W[Blazor Web App] -->|HTTPS JSON| API[ASP.NET Core Web API]
-  MOB[Aplicación móvil futura] -->|HTTPS JSON| API
+  MOB[Expo + React Native] -->|HTTPS JSON| API
   TEST[Cliente de prueba / Postman] -->|HTTPS JSON| API
-  API --> APP[Aplicación: servicios / casos de uso]
-  APP --> DOMAIN[Dominio: entidades y reglas]
+  API --> APP[Services: casos de uso]
+  APP --> DOMAIN[Models: entidades y reglas]
   API --> AUTH[Autenticación / autorización]
-  APP --> PORT[Interfaces de repositorios]
-  INFRA[Infraestructura EF Core / MySQL] -. implementa .-> PORT
-  INFRA --> DB[(MySQL)]
+  APP --> PORT[Interfaces / repositorios]
+  PORT --> DB[(MySQL)]
   APP --> AUD[Auditoría y trazabilidad]
 ```
 
@@ -32,20 +31,21 @@ flowchart TB
 7. Auditoría: acciones sensibles y versiones.
 
 ## Responsabilidades estrictas
-| Proyecto | Puede | No puede |
+| Área | Puede | No puede |
 |---|---|---|
-| `Reporteros.Domain` | Entidades, value objects, invariantes puras | Referenciar ASP.NET, EF, Blazor |
-| `Reporteros.Application` | Casos de uso y políticas de publicación | SQL, componentes UI |
-| `Reporteros.Infrastructure` | Repositorios, MySQL, adaptadores, migraciones | Definir reglas de negocio en controladores |
-| `Reporteros.Api` | HTTP, auth, mapeo DTO, status codes, OpenAPI | Contener toda la lógica o SQL ad hoc |
-| `Reporteros.Contracts` | DTO públicos y esquemas de contrato | Exponer entidades persistentes / DbContext |
+| `Api/Controllers` | HTTP, auth, mapeo DTO, status codes, OpenAPI | Concentrar reglas o SQL ad hoc |
+| `Api/Services` | Casos de uso, validaciones y políticas de publicación | Componentes UI |
+| `Api/Models` | Entidades, value objects e invariantes | Depender de Blazor |
+| `Api/DTOs` | DTO públicos y esquemas de contrato | Exponer entidades persistentes / DbContext |
+| `Api/Repositories` | Acceso a datos y consultas | Definir reglas de presentación |
 | `Reporteros.Web` | Rutas, componentes, cliente HTTP tipado, estados UI | Acceder a MySQL, calcular tablas oficiales |
+| `mobile/` | UI React Native, estado local y consumo HTTP | Referenciar C# o acceder a MySQL |
 
 ## Escenario completo: publicación de resultado
 1. Editor inicia sesión y registra marcador desde Blazor.
 2. Blazor envía `PUT /api/v1/admin/matches/{id}/result` con token/cookie según diseño definitivo y `version`.
-3. API valida autorización y estructura de entrada; Application comprueba coherencia y transición de estado.
-4. Infrastructure actualiza MySQL y auditoría en **una transacción**.
+3. API valida autorización y estructura de entrada; `Services` comprueba coherencia y transición de estado.
+4. La capa de acceso a datos actualiza MySQL y auditoría en **una transacción**.
 5. API responde JSON con nuevo estado, versión y `updatedAt`.
 6. Blazor vuelve a consultar `GET /api/v1/matches/{id}`; cualquier cliente móvil obtiene la misma información pública.
 7. Posiciones se recalculan de resultados oficiales de manera definida; los borradores no afectan resultados visibles.
