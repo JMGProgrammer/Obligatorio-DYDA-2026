@@ -1,4 +1,7 @@
-# REPORTEROS — Centro de información deportiva uruguaya
+<p align="center">
+  <img src="assets/Reporteros-banner.png" alt="REPORTEROS — Centro de información deportiva uruguaya" width="100%">
+</p>
+
 
 > **REPORTEROS · Proyecto obligatorio · Equipo:** Juan Meny, Mateo Rilla y Facundo Villalba.  
 > **Estado documental:** propuesta para validación académica. **Confirmado:** nombre REPORTEROS; plataforma deportiva uruguaya; fútbol, básquetbol y esports; enfoque informativo. **No confirmado:** stack definitivo, competiciones exactas, calendario, fuentes e instituciones asociadas.
