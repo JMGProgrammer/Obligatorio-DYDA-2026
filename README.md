@@ -38,6 +38,9 @@
 | Gestión | [TEAM-WORKFLOW](docs/06-gestion/TEAM-WORKFLOW.md) | Git, responsables, reuniones y decisiones |
 | Gestión | [RISKS](docs/06-gestion/RISKS.md) | Riesgos y mitigaciones |
 | Gestión | [DECISIONS](docs/06-gestion/DECISIONS.md) | Registro de decisiones y pendientes |
+| Gestión | [ITERATION-PLAN](docs/ITERATION-PLAN.md) | Plan de iteraciones I0–I7 con gates |
+| Gestión | [CHANGELOG](CHANGELOG.md) | Registro de cambios significativos por hito |
+| Gestión | [DEVELOPMENT-RULES](docs/DEVELOPMENT-RULES.md) | Versionado por hito/iteración/fix y reglas de desarrollo |
 | Identidad | [BRANDING](docs/07-identidad/BRANDING.md) | Manual operativo de marca |
 | Identidad | [Master](docs/07-identidad/MASTER-BRANDING-Y-PRODUCTO.md) | Documento original consolidado |
 
