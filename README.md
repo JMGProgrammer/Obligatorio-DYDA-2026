@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/Reporteros-banner.png" alt="REPORTEROS — Centro de información deportiva uruguaya" width="100%">
+</p>
+
 # REPORTEROS | Documentación integral v2
 
 > **REPORTEROS — Centro de información deportiva uruguaya**  

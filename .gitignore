@@ -1,0 +1,34 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# User-specific IDE files
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+appsettings.*.json
+!appsettings.Development.json
+
+# Test and coverage output
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Expo / React Native (mobile se implementará al final)
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+mobile/.env
