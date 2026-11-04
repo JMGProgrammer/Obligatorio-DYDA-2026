@@ -121,9 +121,18 @@ curl http://localhost:5279/health
 
 OpenAPI está disponible en desarrollo en `/openapi/v1.json`. La URL local que usa Blazor se configura mediante `Api:BaseUrl` en `src/Reporteros.Web/appsettings.json` y puede sobrescribirse por ambiente.
 
-## Primer corte funcional
+## Primer corte funcional (API-first)
 
-Implementar una vertical completa de competiciones: controlador API → servicio → datos → DTO JSON → `ReporterosApiClient` → componente Blazor. Después repetir el patrón para partidos, noticias y administración.
+Primero asentar la base de datos y la API con datos de prueba en abundancia; la Web se aborda recién cuando la API esté validada con un cliente HTTP independiente.
+
+Secuencia:
+1. Confirmar proveedor MySQL compatible y migración inicial (ADR-018).
+2. Implementar vertical completa de competiciones en la API: controlador → servicio → repositorio → MySQL → DTO JSON → OpenAPI.
+3. Cargar seed de datos de prueba abundante y representativo (3 disciplinas, resultados en borrador/aprobado/corregido, partido suspendido, serie BO3, standings con empate, noticia borrador).
+4. Validar la API con cliente HTTP independiente (curl/Postman) y tests de integración (TC-API-01..07).
+5. Recién entonces conectar `ReporterosApiClient` → componente Blazor y repetir el patrón para partidos, noticias y administración.
+
+La Web no debe implementarse con datos hardcodeados ni consumir endpoints no estabilizados.
 
 ## Criterio de éxito transversal
 Una corrección autorizada de resultado realizada por la API actualiza la información que obtiene Blazor y que obtendrá un cliente móvil, sin duplicar consultas SQL, validaciones ni fórmulas de posiciones en cada frontend.

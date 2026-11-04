@@ -57,6 +57,8 @@ EF Core y migraciones si existe proveedor compatible con la versión del SDK de 
 - **Contexto:** el equipo conoce una organización API por carpetas (`Controllers`, `Services`, `DTOs`, `Models`) y prioriza una curva de aprendizaje gradual.
 - **Consecuencia:** no se crean proyectos separados Domain/Application/Infrastructure/Contracts. Los límites se aplican mediante estructura, revisión de PR y reglas documentadas. Si el proyecto crece, las carpetas pueden extraerse a proyectos sin cambiar el contrato HTTP.
 
-## ADR-020 — Cliente móvil Expo + React Native (APROBADO POR EL EQUIPO)
-- **Decisión:** implementar el cliente móvil al final con Expo + React Native y utilizar Expo Go durante desarrollo.
-- **Consecuencia:** `mobile/` permanece aislado de `Reporteros.sln`, no referencia código C# y consume únicamente endpoints HTTP/JSON documentados por OpenAPI.
+## ADR-021 — Secuenciación API-first (DB + API antes que Web)
+- **Decisión:** asentar primero la base de datos y la API con datos de prueba en abundancia; la Web (Blazor) se aborda recién cuando la API esté validada con un cliente HTTP independiente (curl/Postman) y tests de integración verdes (TC-API-01..07).
+- **Contexto:** evitar pantallas Blazor con datos hardcodeados y consumo de endpoints no estabilizados; validar el contrato HTTP sin depender del frontend.
+- **Consecuencias:** gate explícito "API estable" antes de W1; seed de datos abundante y representativo como requisito previo; la Web reutiliza el mismo cliente HTTP y no duplica reglas.
+- **Revisión:** si la docencia exige demo temprana de UI, se puede usar un cliente HTTP independiente como evidencia sin adelantar Blazor.

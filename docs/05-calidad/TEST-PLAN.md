@@ -33,6 +33,18 @@ Pirámide: unitarias para reglas y clasificación; integración para persistenci
 ## 3. Datos de prueba
 Semillas sintéticas identificadas, incluyendo competiciones y partidos por tres deportes; un partido suspendido; un resultado provisional; una noticia borrador; marcador corregido; serie BO3 y conjunto de standings con empate por puntos.
 
+### Abundancia requerida antes de pasar a la Web (gate API)
+La API no se considera estable hasta contar con datos de prueba abundantes y representativos que ejerciten todos los caminos críticos. Mínimo requerido:
+- Las 3 disciplinas (fútbol, básquetbol, esports) con al menos 2 competiciones cada una.
+- Partidos en estados: programado, en juego, finalizado, suspendido, cancelado.
+- Resultados en borrador, aprobado y corregido (con auditoría antes/después).
+- Serie esports BO3 completa (2-1) y una inválida (3-1) para validar formato.
+- Standings con empate por puntos y desempate por reglamento.
+- Noticia en borrador, publicada y archivada.
+- Al menos un partido sin fuente verificable (para TC-03) y un usuario por rol (anónimo, editor, revisor, admin).
+
+La validación de la API con cliente HTTP independiente (TC-API-01..07) se ejecuta sobre este seed antes de iniciar cualquier componente Blazor.
+
 ## 4. Defectos
 Severidad S1: acceso indebido, datos públicos falsos por bug, pérdida/corrupción. S2: flujo principal roto. S3: visual o funcional secundario. Para cerrar S1/S2 debe existir prueba de regresión.
 

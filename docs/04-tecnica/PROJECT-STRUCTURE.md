@@ -54,5 +54,12 @@ La solución contiene únicamente los dos proyectos `.NET`. Las carpetas de API 
 - `DateTimeOffset` o UTC representado inequívocamente; mostrar horarios en America/Montevideo en clientes.
 - Secrets locales fuera de repositorio; `.gitignore` para bin/obj y archivos privados.
 
-## Primer corte vertical
-`GET /api/v1/competitions` → servicio → repositorio → MySQL → JSON → `CompetitionApiClient` → `Competitions.razor`; prueba HTTP y prueba de integración. Repetir patrón para encuentros, noticias y administración.
+## Primer corte vertical (API-first)
+Primero asentar la base de datos y la API con datos de prueba en abundancia; la Web se conecta recién después.
+
+Secuencia:
+1. Migración inicial + seed mínimo (`GET /api/v1/sports`).
+2. API de competiciones/partidos con JSON/OpenAPI y pruebas de integración.
+3. Seed de datos de prueba abundante y representativo (3 disciplinas).
+4. Validación de la API con cliente HTTP independiente (curl/Postman) + TC-API-01..07.
+5. Recién entonces: `GET /api/v1/competitions` → servicio → repositorio → MySQL → JSON → `CompetitionApiClient` → `Competitions.razor`; prueba HTTP y prueba de integración. Repetir patrón para encuentros, noticias y administración.

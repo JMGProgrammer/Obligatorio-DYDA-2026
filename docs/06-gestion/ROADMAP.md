@@ -44,16 +44,28 @@ Clasificaciones requieren resultado confirmado y regla por temporada; detalle p�
 - Los errores HTTP de la API, versiones y contratos se especifican en `../04-tecnica/API.md` y `../04-tecnica/API-CONTRACTS.md`.
 
 
-## Secuencia vertical obligatoria para evitar duplicar lógica
-| Hito | Entregable verificable | Dependencias |
+## Estrategia de implementación: API-first (DB + API antes que Web)
+La prioridad del equipo es **asentar primero la base de datos y la API**, con datos de prueba en abundancia, y solo cuando la API esté validada con un cliente independiente (curl/Postman) se aborda la Web. Esto evita duplicar lógica y permite probar el contrato HTTP sin depender de Blazor.
+
+Reglas derivadas:
+- No se implementan pantallas Blazor con datos hardcodeados ni se consumen endpoints no estabilizados.
+- Cada vertical nuevo se cierra primero en la API (endpoint + servicio + persistencia + tests) y después se conecta a la Web.
+- La semilla de datos debe ser abundante y representativa (las 3 disciplinas, resultados en borrador/aprobado/corregido, un partido suspendido, serie BO3, standings con empate, noticia borrador) antes de considerar estable la API.
+- El gate de paso a la Web es: API corriendo, migraciones aplicadas, seed reproducible, tests de integración verdes y validación con cliente HTTP independiente (TC-API-01..07).
+
+## Secuencia vertical obligatoria (API-first)
+| Fase | Entregable verificable | Dependencias |
 |---|---|---|
-| H0 | Versión .NET/proveedor MySQL confirmados; solución creada | Docentes y entorno |
-| H1 | MySQL + migración inicial + API `GET /sports` | H0 |
-| H2 | API de competiciones/partidos con JSON/OpenAPI y pruebas | H1 |
-| H3 | Blazor lista/filtra partidos mediante `HttpClient` | H2 |
-| H4 | Auth y administración de resultados con auditoría | H3 |
-| H5 | Noticias y fichas con DTO; clasificaciones validadas | H4 |
-| H6 | Evidencia cliente HTTP independiente como futuro móvil | H5 |
-| H7 | Tests, documentación, demo, backup y presentación | H6 |
+| A0 | Versión .NET/proveedor MySQL confirmados; solución creada | Docentes y entorno |
+| A1 | MySQL + migración inicial + seed mínimo (`GET /sports`) | A0 |
+| A2 | API de competiciones/partidos con JSON/OpenAPI y pruebas de integración | A1 |
+| A3 | Seed de datos de prueba abundante y representativo (3 disciplinas) | A2 |
+| A4 | Validación de la API con cliente HTTP independiente (curl/Postman) + TC-API | A3 |
+| **GATE API** | **API estable y testeada; recién aquí se inicia la Web** | A4 |
+| W1 | Blazor lista/filtra partidos mediante `HttpClient` | Gate API |
+| W2 | Auth y administración de resultados con auditoría en Blazor | W1 |
+| W3 | Noticias y fichas con DTO; clasificaciones validadas | W2 |
+| W4 | Evidencia cliente HTTP independiente como futuro móvil | W3 |
+| W5 | Tests, documentación, demo, backup y presentación | W4 |
 
 No intentar comenzar por todas las pantallas con datos hardcodeados: entregar primero un flujo entero MySQL → API → Blazor, luego ampliar. Los hitos no tienen fechas inventadas.
