@@ -1,0 +1,95 @@
+﻿@page "/admin/competiciones/crear"
+
+@inject ReporterosApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Crear competición — REPORTEROS</PageTitle>
+
+<h1>Crear competición</h1>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <EditForm Model="modelo" OnValidSubmit="Guardar">
+        <div class="mb-2">
+            <label>Deporte</label>
+            <InputSelect @bind-Value="modelo.DeporteId" class="form-control">
+                @foreach (var d in deportes ?? new())
+                {
+                    <option value="@d.Id">@d.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-2">
+            <label>Nombre</label>
+            <InputText @bind-Value="modelo.Nombre" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Ámbito</label>
+            <InputText @bind-Value="modelo.Ambito" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Formato</label>
+            <InputText @bind-Value="modelo.Formato" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Juego Id (opcional, solo esports)</label>
+            <InputNumber @bind-Value="modelo.JuegoId" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </EditForm>
+
+    @if (mensaje is not null)
+    {
+        <p class="mt-2">@mensaje</p>
+    }
+    @if (error is not null)
+    {
+        <p class="text-danger mt-2">Error: @error</p>
+    }
+}
+
+@code {
+    private List<DeporteReadDTO>? deportes;
+    private bool cargando = true;
+    private string? error;
+    private string? mensaje;
+    private CompeticionCreateDTO modelo = new() { Ambito = "nacional", Formato = "liga" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            deportes = await Api.GetDeportesAsync();
+            if (deportes.Count > 0)
+                modelo.DeporteId = deportes[0].Id;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private async Task Guardar()
+    {
+        error = null;
+        mensaje = null;
+        try
+        {
+            var creado = await Api.CrearCompeticionAsync(modelo);
+            mensaje = $"Creada competición Id={creado.Id}: {creado.Nombre}";
+            modelo = new CompeticionCreateDTO { DeporteId = modelo.DeporteId, Ambito = "nacional", Formato = "liga" };
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

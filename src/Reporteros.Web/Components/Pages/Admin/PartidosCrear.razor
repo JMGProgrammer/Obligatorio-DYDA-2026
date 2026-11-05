@@ -1,0 +1,138 @@
+﻿@page "/admin/partidos/crear"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Crear partido — REPORTEROS</PageTitle>
+
+<h1>Crear partido</h1>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <EditForm Model="modelo" OnValidSubmit="Guardar">
+        <div class="mb-2">
+            <label>Competición</label>
+            <InputSelect @bind-Value="competicionId" class="form-control" @bind-Value:after="CargarTemporadas">
+                @foreach (var c in competiciones ?? new())
+                {
+                    <option value="@c.Id">@c.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-2">
+            <label>Temporada</label>
+            <InputSelect @bind-Value="modelo.TemporadaId" class="form-control">
+                @foreach (var t in temporadas)
+                {
+                    <option value="@t.Id">@t.Etiqueta (@t.Estado)</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-2">
+            <label>Equipo local</label>
+            <InputSelect @bind-Value="modelo.EquipoLocalId" class="form-control">
+                @foreach (var e in equipos ?? new())
+                {
+                    <option value="@e.Id">@e.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-2">
+            <label>Equipo visitante</label>
+            <InputSelect @bind-Value="modelo.EquipoVisitanteId" class="form-control">
+                @foreach (var e in equipos ?? new())
+                {
+                    <option value="@e.Id">@e.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="mb-2">
+            <label>Fecha/hora (UTC)</label>
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="fecha" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Mejor de (esports, opcional)</label>
+            <InputNumber @bind-Value="modelo.MejorDe" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Fuente Id (opcional)</label>
+            <InputNumber @bind-Value="modelo.FuenteId" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Crear</button>
+    </EditForm>
+
+    @if (mensaje is not null) { <p class="mt-2">@mensaje</p> }
+    @if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
+}
+
+@code {
+    private List<CompeticionReadDTO>? competiciones;
+    private List<TemporadaReadDTO> temporadas = new();
+    private List<EquipoReadDTO>? equipos;
+    private bool cargando = true;
+    private string? error;
+    private string? mensaje;
+    private long competicionId;
+    private DateTime fecha = DateTime.UtcNow.AddDays(7);
+    private PartidoCreateDTO modelo = new() { Estado = "programado" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            competiciones = await Api.GetCompeticionesAsync();
+            equipos = await Api.GetEquiposAsync();
+            if (competiciones.Count > 0)
+            {
+                competicionId = competiciones[0].Id;
+                await CargarTemporadas();
+            }
+            if (equipos.Count > 0)
+            {
+                modelo.EquipoLocalId = equipos[0].Id;
+                modelo.EquipoVisitanteId = equipos.Count > 1 ? equipos[1].Id : equipos[0].Id;
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private async Task CargarTemporadas()
+    {
+        try
+        {
+            temporadas = (await Api.GetTemporadasPorCompeticionAsync(competicionId)).ToList();
+            if (temporadas.Count > 0)
+                modelo.TemporadaId = temporadas[0].Id;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private async Task Guardar()
+    {
+        error = null;
+        mensaje = null;
+        modelo.ProgramadoEn = fecha;
+        try
+        {
+            var creado = await Api.CrearPartidoAsync(modelo);
+            mensaje = $"Creado partido Id={creado.Id}: {creado.EquipoLocalNombre} vs {creado.EquipoVisitanteNombre}";
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

@@ -1,0 +1,125 @@
+﻿@page "/admin/partidos/resultado"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Publicar resultado — REPORTEROS</PageTitle>
+
+<h1>Publicar / corregir resultado</h1>
+
+<div class="mb-2">
+    <label>Temporada Id</label>
+    <input type="number" @bind="temporadaId" />
+    <button class="btn btn-sm btn-secondary" @onclick="CargarPartidos">Cargar partidos</button>
+</div>
+
+@if (partidos is not null)
+{
+    <div class="mb-2">
+        <label>Partido</label>
+        <select @bind="partidoId" @bind:after="ActualizarSeleccionado" class="form-control">
+            @foreach (var p in partidos)
+            {
+                <option value="@p.Id">@p.Id — @p.EquipoLocalNombre vs @p.EquipoVisitanteNombre (@p.Estado) v@p.Version</option>
+            }
+        </select>
+    </div>
+}
+
+@if (partidoSeleccionado is not null)
+{
+    <p><strong>@partidoSeleccionado.EquipoLocalNombre</strong> vs <strong>@partidoSeleccionado.EquipoVisitanteNombre</strong> — versión actual: @partidoSeleccionado.Version</p>
+}
+
+<EditForm Model="modelo" OnValidSubmit="Guardar">
+    <div class="mb-2">
+        <label>Puntos local</label>
+        <InputNumber @bind-Value="modelo.PuntosLocal" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Puntos visitante</label>
+        <InputNumber @bind-Value="modelo.PuntosVisitante" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Estado</label>
+        <InputText @bind-Value="modelo.Estado" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Versión actual (enviar la del partido)</label>
+        <InputNumber @bind-Value="modelo.Version" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Motivo</label>
+        <InputText @bind-Value="modelo.Motivo" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Editor Id</label>
+        <InputNumber @bind-Value="editorId" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Publicar resultado</button>
+</EditForm>
+
+@if (mensaje is not null) { <p class="mt-2">@mensaje</p> }
+@if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
+
+@code {
+    private long temporadaId = 1;
+    private long partidoId;
+    private long editorId = 1;
+    private List<PartidoReadDTO>? partidos;
+    private PartidoReadDTO? partidoSeleccionado;
+    private string? error;
+    private string? mensaje;
+    private PartidoResultadoDTO modelo = new() { Estado = "finalizado", Version = 1 };
+
+    private async Task CargarPartidos()
+    {
+        error = null;
+        try
+        {
+            partidos = await Api.GetPartidosPorTemporadaAsync(temporadaId);
+            if (partidos.Count > 0)
+            {
+                partidoId = partidos[0].Id;
+                ActualizarSeleccionado();
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private void ActualizarSeleccionado()
+    {
+        partidoSeleccionado = partidos?.FirstOrDefault(p => p.Id == partidoId);
+        if (partidoSeleccionado is not null)
+        {
+            modelo.Version = partidoSeleccionado.Version;
+            modelo.PuntosLocal = partidoSeleccionado.PuntosLocal ?? 0;
+            modelo.PuntosVisitante = partidoSeleccionado.PuntosVisitante ?? 0;
+            modelo.Estado = partidoSeleccionado.Estado == "programado" ? "finalizado" : partidoSeleccionado.Estado;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        // keep selection in sync when partidoId changes via binding
+    }
+
+    private async Task Guardar()
+    {
+        error = null;
+        mensaje = null;
+        try
+        {
+            var actualizado = await Api.PublicarResultadoAsync(partidoId, editorId, modelo);
+            mensaje = $"Resultado publicado: {actualizado.EquipoLocalNombre} {actualizado.PuntosLocal}-{actualizado.PuntosVisitante} {actualizado.EquipoVisitanteNombre} (v{actualizado.Version})";
+            partidoSeleccionado = actualizado;
+            modelo.Version = actualizado.Version;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
