@@ -1,4 +1,6 @@
-﻿@page "/admin/articulos/publicar"
+@page "/admin/articulos/publicar"
+
+@rendermode InteractiveServer
 
 @inject ReporterosApiClient Api
 @inject Reporteros.Web.Services.TokenStorage Tokens
@@ -18,6 +20,11 @@
 @if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
 
 @code {
+    protected override void OnInitialized()
+    {
+        if (!Tokens.EstaAutenticado) { Nav.NavigateTo("/login"); }
+    }
+
     private long articuloId = 2;
     private string? error;
     private string? mensaje;

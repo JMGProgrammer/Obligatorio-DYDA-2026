@@ -1,4 +1,6 @@
-﻿@page "/admin/partidos/resultado"
+@page "/admin/partidos/resultado"
+
+@rendermode InteractiveServer
 
 @inject ReporterosApiClient Api
 @inject Reporteros.Web.Services.TokenStorage Tokens
@@ -32,7 +34,7 @@
     <p><strong>@partidoSeleccionado.EquipoLocalNombre</strong> vs <strong>@partidoSeleccionado.EquipoVisitanteNombre</strong> — versión actual: @partidoSeleccionado.Version</p>
 }
 
-<EditForm Model="modelo" OnValidSubmit="Guardar">
+<EditForm Model="modelo" FormName="form" OnValidSubmit="Guardar">
     <div class="mb-2">
         <label>Puntos local</label>
         <InputNumber @bind-Value="modelo.PuntosLocal" class="form-control" />

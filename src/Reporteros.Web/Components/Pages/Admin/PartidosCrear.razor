@@ -1,4 +1,6 @@
-﻿@page "/admin/partidos/crear"
+@page "/admin/partidos/crear"
+
+@rendermode InteractiveServer
 
 @inject ReporterosApiClient Api
 @inject Reporteros.Web.Services.TokenStorage Tokens
@@ -14,7 +16,7 @@
 }
 else
 {
-    <EditForm Model="modelo" OnValidSubmit="Guardar">
+    <EditForm Model="modelo" FormName="form" OnValidSubmit="Guardar">
         <div class="mb-2">
             <label>Competición</label>
             <InputSelect @bind-Value="competicionId" class="form-control" @bind-Value:after="CargarTemporadas">

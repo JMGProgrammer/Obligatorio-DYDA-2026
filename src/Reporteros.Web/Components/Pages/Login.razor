@@ -1,4 +1,6 @@
-﻿@page "/login"
+@page "/login"
+
+@rendermode InteractiveServer
 
 @inject ReporterosApiClient Api
 @inject Reporteros.Web.Services.TokenStorage Tokens
@@ -8,7 +10,7 @@
 
 <h1>Login</h1>
 
-<EditForm Model="modelo" OnValidSubmit="Ingresar">
+<EditForm Model="modelo" FormName="form" OnValidSubmit="Ingresar">
     <div class="mb-2">
         <label>Correo</label>
         <InputText @bind-Value="modelo.Correo" class="form-control" />

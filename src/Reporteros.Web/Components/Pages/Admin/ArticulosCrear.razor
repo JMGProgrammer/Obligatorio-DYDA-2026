@@ -1,4 +1,6 @@
-﻿@page "/admin/articulos/crear"
+@page "/admin/articulos/crear"
+
+@rendermode InteractiveServer
 
 @inject ReporterosApiClient Api
 @inject Reporteros.Web.Services.TokenStorage Tokens
@@ -8,7 +10,7 @@
 
 <h1>Crear artículo (borrador)</h1>
 
-<EditForm Model="modelo" OnValidSubmit="Guardar">
+<EditForm Model="modelo" FormName="form" OnValidSubmit="Guardar">
     <div class="mb-2">
         <label>Autor Id</label>
         <InputNumber @bind-Value="modelo.AutorUsuarioId" class="form-control" />
@@ -36,6 +38,11 @@
 @if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
 
 @code {
+    protected override void OnInitialized()
+    {
+        if (!Tokens.EstaAutenticado) { Nav.NavigateTo("/login"); }
+    }
+
     private ArticuloCreateDTO modelo = new() { AutorUsuarioId = 2 };
     private string? error;
     private string? mensaje;
