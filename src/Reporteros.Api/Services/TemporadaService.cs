@@ -15,14 +15,14 @@ namespace Reporteros.Api.Services
             _contexto = contexto;
         }
 
-        public async Task<IReadOnlyList<TemporadaLecturaDto>> ObtenerPorCompeticionAsync(long competicionId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TemporadaReadDTO>> ObtenerPorCompeticionAsync(long competicionId, CancellationToken cancellationToken = default)
         {
             return await _contexto.Temporadas
                 .AsNoTracking()
                 .Include(t => t.Competicion)
                 .Where(t => t.CompeticionId == competicionId)
                 .OrderBy(t => t.Inicio)
-                .Select(t => new TemporadaLecturaDto
+                .Select(t => new TemporadaReadDTO
                 {
                     Id = t.Id,
                     CompeticionId = t.CompeticionId,
@@ -35,7 +35,7 @@ namespace Reporteros.Api.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<TemporadaLecturaDto> CrearAsync(TemporadaCreacionDto dto, CancellationToken cancellationToken = default)
+        public async Task<TemporadaReadDTO> CrearAsync(TemporadaCreateDTO dto, CancellationToken cancellationToken = default)
         {
             var competicion = await _contexto.Competiciones.FindAsync(new object[] { dto.CompeticionId }, cancellationToken);
             if (competicion is null)
@@ -54,7 +54,7 @@ namespace Reporteros.Api.Services
             _contexto.Temporadas.Add(temporada);
             await _contexto.SaveChangesAsync(cancellationToken);
 
-            return new TemporadaLecturaDto
+            return new TemporadaReadDTO
             {
                 Id = temporada.Id,
                 CompeticionId = temporada.CompeticionId,

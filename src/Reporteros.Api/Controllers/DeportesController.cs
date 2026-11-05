@@ -17,11 +17,11 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<DeporteLecturaDto>>> ObtenerTodos(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<DeporteReadDTO>>> ObtenerTodos(CancellationToken cancellationToken)
         {
             var deportes = await _servicio.ObtenerTodosAsync(cancellationToken);
 
-            var dto = deportes.Select(d => new DeporteLecturaDto
+            var dto = deportes.Select(d => new DeporteReadDTO
             {
                 Id = d.Id,
                 Slug = d.Slug,

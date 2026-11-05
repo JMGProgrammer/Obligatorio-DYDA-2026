@@ -16,14 +16,14 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<CompeticionLecturaDto>>> ObtenerTodas(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<CompeticionReadDTO>>> ObtenerTodas(CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerTodasAsync(cancellationToken);
             return Ok(resultado);
         }
 
         [HttpGet("{id:long}")]
-        public async Task<ActionResult<CompeticionLecturaDto>> ObtenerPorId(long id, CancellationToken cancellationToken)
+        public async Task<ActionResult<CompeticionReadDTO>> ObtenerPorId(long id, CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerPorIdAsync(id, cancellationToken);
             if (resultado is null)
@@ -32,7 +32,7 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CompeticionLecturaDto>> Crear([FromBody] CompeticionCreacionDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<CompeticionReadDTO>> Crear([FromBody] CompeticionCreateDTO dto, CancellationToken cancellationToken)
         {
             try
             {

@@ -1,6 +1,6 @@
 namespace Reporteros.Api.DTOs
 {
-    public class PartidoResultadoDto
+    public class PartidoResultadoDTO
     {
         public int PuntosLocal { get; set; }
         public int PuntosVisitante { get; set; }

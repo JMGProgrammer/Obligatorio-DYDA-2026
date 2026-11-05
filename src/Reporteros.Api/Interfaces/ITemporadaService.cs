@@ -5,7 +5,7 @@ namespace Reporteros.Api.Interfaces
 {
     public interface ITemporadaService
     {
-        Task<IReadOnlyList<TemporadaLecturaDto>> ObtenerPorCompeticionAsync(long competicionId, CancellationToken cancellationToken = default);
-        Task<TemporadaLecturaDto> CrearAsync(TemporadaCreacionDto dto, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<TemporadaReadDTO>> ObtenerPorCompeticionAsync(long competicionId, CancellationToken cancellationToken = default);
+        Task<TemporadaReadDTO> CrearAsync(TemporadaCreateDTO dto, CancellationToken cancellationToken = default);
     }
 }

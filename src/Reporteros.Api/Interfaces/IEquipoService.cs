@@ -5,7 +5,7 @@ namespace Reporteros.Api.Interfaces
 {
     public interface IEquipoService
     {
-        Task<IReadOnlyList<EquipoLecturaDto>> ObtenerTodosAsync(CancellationToken cancellationToken = default);
-        Task<EquipoLecturaDto> CrearAsync(EquipoCreacionDto dto, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<EquipoReadDTO>> ObtenerTodosAsync(CancellationToken cancellationToken = default);
+        Task<EquipoReadDTO> CrearAsync(EquipoCreateDTO dto, CancellationToken cancellationToken = default);
     }
 }

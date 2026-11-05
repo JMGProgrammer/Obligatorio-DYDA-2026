@@ -1,6 +1,6 @@
 namespace Reporteros.Api.DTOs
 {
-    public class TemporadaCreacionDto
+    public class TemporadaCreateDTO
     {
         public long CompeticionId { get; set; }
         public string Etiqueta { get; set; } = string.Empty;

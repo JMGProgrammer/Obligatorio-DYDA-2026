@@ -16,14 +16,14 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpGet("por-competicion/{competicionId:long}")]
-        public async Task<ActionResult<IReadOnlyList<TemporadaLecturaDto>>> ObtenerPorCompeticion(long competicionId, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<TemporadaReadDTO>>> ObtenerPorCompeticion(long competicionId, CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerPorCompeticionAsync(competicionId, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TemporadaLecturaDto>> Crear([FromBody] TemporadaCreacionDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<TemporadaReadDTO>> Crear([FromBody] TemporadaCreateDTO dto, CancellationToken cancellationToken)
         {
             try
             {

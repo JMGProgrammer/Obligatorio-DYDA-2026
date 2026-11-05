@@ -16,21 +16,21 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpGet("por-temporada/{temporadaId:long}")]
-        public async Task<ActionResult<IReadOnlyList<PartidoLecturaDto>>> ObtenerPorTemporada(long temporadaId, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<PartidoReadDTO>>> ObtenerPorTemporada(long temporadaId, CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerPorTemporadaAsync(temporadaId, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<PartidoLecturaDto>>> ObtenerPorFecha([FromQuery] DateTime fecha, [FromQuery] long? deporteId, CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<PartidoReadDTO>>> ObtenerPorFecha([FromQuery] DateTime fecha, [FromQuery] long? deporteId, CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerPorFechaAsync(fecha, deporteId, cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPost]
-        public async Task<ActionResult<PartidoLecturaDto>> Crear([FromBody] PartidoCreacionDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<PartidoReadDTO>> Crear([FromBody] PartidoCreateDTO dto, CancellationToken cancellationToken)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpPut("{id:long}/resultado")]
-        public async Task<ActionResult<PartidoLecturaDto>> PublicarResultado(long id, [FromQuery] long editorId, [FromBody] PartidoResultadoDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<PartidoReadDTO>> PublicarResultado(long id, [FromQuery] long editorId, [FromBody] PartidoResultadoDTO dto, CancellationToken cancellationToken)
         {
             try
             {

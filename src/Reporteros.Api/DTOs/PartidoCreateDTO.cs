@@ -1,6 +1,6 @@
 namespace Reporteros.Api.DTOs
 {
-    public class PartidoCreacionDto
+    public class PartidoCreateDTO
     {
         public long TemporadaId { get; set; }
         public long EquipoLocalId { get; set; }

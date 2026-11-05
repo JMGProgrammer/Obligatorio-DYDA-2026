@@ -15,12 +15,12 @@ namespace Reporteros.Api.Services
             _contexto = contexto;
         }
 
-        public async Task<IReadOnlyList<EquipoLecturaDto>> ObtenerTodosAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<EquipoReadDTO>> ObtenerTodosAsync(CancellationToken cancellationToken = default)
         {
             return await _contexto.Equipos
                 .AsNoTracking()
                 .OrderBy(e => e.Nombre)
-                .Select(e => new EquipoLecturaDto
+                .Select(e => new EquipoReadDTO
                 {
                     Id = e.Id,
                     Nombre = e.Nombre,
@@ -31,7 +31,7 @@ namespace Reporteros.Api.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<EquipoLecturaDto> CrearAsync(EquipoCreacionDto dto, CancellationToken cancellationToken = default)
+        public async Task<EquipoReadDTO> CrearAsync(EquipoCreateDTO dto, CancellationToken cancellationToken = default)
         {
             var equipo = new Equipo
             {
@@ -44,7 +44,7 @@ namespace Reporteros.Api.Services
             _contexto.Equipos.Add(equipo);
             await _contexto.SaveChangesAsync(cancellationToken);
 
-            return new EquipoLecturaDto
+            return new EquipoReadDTO
             {
                 Id = equipo.Id,
                 Nombre = equipo.Nombre,

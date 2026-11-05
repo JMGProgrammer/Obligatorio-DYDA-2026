@@ -15,14 +15,14 @@ namespace Reporteros.Api.Services
             _contexto = contexto;
         }
 
-        public async Task<IReadOnlyList<CompeticionLecturaDto>> ObtenerTodasAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<CompeticionReadDTO>> ObtenerTodasAsync(CancellationToken cancellationToken = default)
         {
             return await _contexto.Competiciones
                 .AsNoTracking()
                 .Include(c => c.Deporte)
                 .Include(c => c.Juego)
                 .OrderBy(c => c.Nombre)
-                .Select(c => new CompeticionLecturaDto
+                .Select(c => new CompeticionReadDTO
                 {
                     Id = c.Id,
                     DeporteId = c.DeporteId,
@@ -36,14 +36,14 @@ namespace Reporteros.Api.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<CompeticionLecturaDto?> ObtenerPorIdAsync(long id, CancellationToken cancellationToken = default)
+        public async Task<CompeticionReadDTO?> ObtenerPorIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _contexto.Competiciones
                 .AsNoTracking()
                 .Include(c => c.Deporte)
                 .Include(c => c.Juego)
                 .Where(c => c.Id == id)
-                .Select(c => new CompeticionLecturaDto
+                .Select(c => new CompeticionReadDTO
                 {
                     Id = c.Id,
                     DeporteId = c.DeporteId,
@@ -57,7 +57,7 @@ namespace Reporteros.Api.Services
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<CompeticionLecturaDto> CrearAsync(CompeticionCreacionDto dto, CancellationToken cancellationToken = default)
+        public async Task<CompeticionReadDTO> CrearAsync(CompeticionCreateDTO dto, CancellationToken cancellationToken = default)
         {
             var deporte = await _contexto.Deportes.FindAsync(new object[] { dto.DeporteId }, cancellationToken);
             if (deporte is null)

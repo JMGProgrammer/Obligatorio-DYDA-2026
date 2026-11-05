@@ -16,14 +16,14 @@ namespace Reporteros.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<EquipoLecturaDto>>> ObtenerTodos(CancellationToken cancellationToken)
+        public async Task<ActionResult<IReadOnlyList<EquipoReadDTO>>> ObtenerTodos(CancellationToken cancellationToken)
         {
             var resultado = await _servicio.ObtenerTodosAsync(cancellationToken);
             return Ok(resultado);
         }
 
         [HttpPost]
-        public async Task<ActionResult<EquipoLecturaDto>> Crear([FromBody] EquipoCreacionDto dto, CancellationToken cancellationToken)
+        public async Task<ActionResult<EquipoReadDTO>> Crear([FromBody] EquipoCreateDTO dto, CancellationToken cancellationToken)
         {
             var creado = await _servicio.CrearAsync(dto, cancellationToken);
             return CreatedAtAction(nameof(ObtenerTodos), creado);

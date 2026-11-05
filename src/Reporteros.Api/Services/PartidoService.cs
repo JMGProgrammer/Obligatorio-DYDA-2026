@@ -15,7 +15,7 @@ namespace Reporteros.Api.Services
             _contexto = contexto;
         }
 
-        private static PartidoLecturaDto Mapear(Partido p) => new PartidoLecturaDto
+        private static PartidoReadDTO Mapear(Partido p) => new PartidoReadDTO
         {
             Id = p.Id,
             TemporadaId = p.TemporadaId,
@@ -45,7 +45,7 @@ namespace Reporteros.Api.Services
                 .Include(p => p.EquipoVisitante)
                 .Include(p => p.Fuente);
 
-        public async Task<IReadOnlyList<PartidoLecturaDto>> ObtenerPorTemporadaAsync(long temporadaId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<PartidoReadDTO>> ObtenerPorTemporadaAsync(long temporadaId, CancellationToken cancellationToken = default)
         {
             var partidos = await ConsultaBase()
                 .Where(p => p.TemporadaId == temporadaId)
@@ -55,7 +55,7 @@ namespace Reporteros.Api.Services
             return partidos.Select(Mapear).ToList();
         }
 
-        public async Task<IReadOnlyList<PartidoLecturaDto>> ObtenerPorFechaAsync(DateTime fecha, long? deporteId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<PartidoReadDTO>> ObtenerPorFechaAsync(DateTime fecha, long? deporteId, CancellationToken cancellationToken = default)
         {
             var inicio = fecha.Date;
             var fin = inicio.AddDays(1);
@@ -69,7 +69,7 @@ namespace Reporteros.Api.Services
             return partidos.Select(Mapear).ToList();
         }
 
-        public async Task<PartidoLecturaDto> CrearAsync(PartidoCreacionDto dto, CancellationToken cancellationToken = default)
+        public async Task<PartidoReadDTO> CrearAsync(PartidoCreateDTO dto, CancellationToken cancellationToken = default)
         {
             if (dto.EquipoLocalId == dto.EquipoVisitanteId)
                 throw new ArgumentException("El equipo local y el visitante no pueden ser el mismo.");
@@ -109,7 +109,7 @@ namespace Reporteros.Api.Services
             return Mapear(creado);
         }
 
-        public async Task<PartidoLecturaDto> PublicarResultadoAsync(long id, long editorUsuarioId, PartidoResultadoDto dto, CancellationToken cancellationToken = default)
+        public async Task<PartidoReadDTO> PublicarResultadoAsync(long id, long editorUsuarioId, PartidoResultadoDTO dto, CancellationToken cancellationToken = default)
         {
             using var transaccion = await _contexto.Database.BeginTransactionAsync(cancellationToken);
 
