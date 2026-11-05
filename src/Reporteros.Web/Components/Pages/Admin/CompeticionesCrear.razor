@@ -1,6 +1,8 @@
 ﻿@page "/admin/competiciones/crear"
 
 @inject ReporterosApiClient Api
+@inject Reporteros.Web.Services.TokenStorage Tokens
+@inject NavigationManager Nav
 @inject NavigationManager Nav
 
 <PageTitle>Crear competición — REPORTEROS</PageTitle>
@@ -61,6 +63,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (!Tokens.EstaAutenticado) { Nav.NavigateTo("/login"); return; }
         try
         {
             deportes = await Api.GetDeportesAsync();

@@ -1,6 +1,8 @@
 ﻿@page "/admin/partidos/resultado"
 
 @inject ReporterosApiClient Api
+@inject Reporteros.Web.Services.TokenStorage Tokens
+@inject NavigationManager Nav
 
 <PageTitle>Publicar resultado — REPORTEROS</PageTitle>
 
@@ -62,6 +64,14 @@
 @if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
 
 @code {
+    protected override void OnInitialized()
+    {
+        if (!Tokens.EstaAutenticado)
+        {
+            Nav.NavigateTo("/login");
+        }
+    }
+
     private long temporadaId = 1;
     private long partidoId;
     private long editorId = 1;

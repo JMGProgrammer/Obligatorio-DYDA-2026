@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject Reporteros.Web.Services.TokenStorage Tokens
+@inject NavigationManager Nav
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">REPORTEROS</a>
     </div>
@@ -33,31 +36,55 @@
                 <span class="bi bi-newspaper-nav-menu" aria-hidden="true"></span> Noticias
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="admin/competiciones/crear">
-                <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear competición
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="admin/partidos/crear">
-                <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear partido
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="admin/partidos/resultado">
-                <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Publicar resultado
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="admin/articulos/crear">
-                <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear artículo
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="admin/articulos/publicar">
-                <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Publicar artículo
-            </NavLink>
-        </div>
+        @if (Tokens.EstaAutenticado)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/competiciones/crear">
+                    <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear competición
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/partidos/crear">
+                    <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear partido
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/partidos/resultado">
+                    <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Publicar resultado
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/articulos/crear">
+                    <span class="bi bi-plus-circle-nav-menu" aria-hidden="true"></span> Crear artículo
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin/articulos/publicar">
+                    <span class="bi bi-pencil-square-nav-menu" aria-hidden="true"></span> Publicar artículo
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <span class="nav-link">Hola, @Tokens.Nombre (@Tokens.Rol)</span>
+            </div>
+            <div class="nav-item px-3">
+                <button class="btn btn-link nav-link" @onclick="Logout">Cerrar sesión</button>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-box-arrow-in-right-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
+@code {
+    private void Logout()
+    {
+        Tokens.Limpiar();
+        Nav.NavigateTo("/");
+    }
+}

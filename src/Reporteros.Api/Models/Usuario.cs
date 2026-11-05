@@ -6,6 +6,7 @@ namespace Reporteros.Api.Models
         public string Correo { get; set; } = string.Empty;
         public string NombreMostrado { get; set; } = string.Empty;
         public string Rol { get; set; } = "visitante";
+        public string PasswordHash { get; set; } = string.Empty;
 
         public ICollection<Articulo> Articulos { get; set; } = new List<Articulo>();
         public ICollection<RevisionResultado> Revisiones { get; set; } = new List<RevisionResultado>();

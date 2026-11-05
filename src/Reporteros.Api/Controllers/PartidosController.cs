@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reporteros.Api.DTOs;
 using Reporteros.Api.Interfaces;
@@ -29,6 +30,7 @@ namespace Reporteros.Api.Controllers
             return Ok(resultado);
         }
 
+        [Authorize(Roles = "admin,editor")]
         [HttpPost]
         public async Task<ActionResult<PartidoReadDTO>> Crear([FromBody] PartidoCreateDTO dto, CancellationToken cancellationToken)
         {
@@ -47,6 +49,7 @@ namespace Reporteros.Api.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,editor,revisor")]
         [HttpPut("{id:long}/resultado")]
         public async Task<ActionResult<PartidoReadDTO>> PublicarResultado(long id, [FromQuery] long editorId, [FromBody] PartidoResultadoDTO dto, CancellationToken cancellationToken)
         {

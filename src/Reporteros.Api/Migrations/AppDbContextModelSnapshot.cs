@@ -868,6 +868,10 @@ namespace Reporteros.Api.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("varchar(120)");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Rol")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -886,6 +890,7 @@ namespace Reporteros.Api.Migrations
                             Id = 1L,
                             Correo = "admin@reporteros.uy",
                             NombreMostrado = "Admin",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==",
                             Rol = "admin"
                         },
                         new
@@ -893,6 +898,7 @@ namespace Reporteros.Api.Migrations
                             Id = 2L,
                             Correo = "editor@reporteros.uy",
                             NombreMostrado = "Editor",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==",
                             Rol = "editor"
                         },
                         new
@@ -900,6 +906,7 @@ namespace Reporteros.Api.Migrations
                             Id = 3L,
                             Correo = "revisor@reporteros.uy",
                             NombreMostrado = "Revisor",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==",
                             Rol = "revisor"
                         },
                         new
@@ -907,6 +914,7 @@ namespace Reporteros.Api.Migrations
                             Id = 4L,
                             Correo = "visitante@reporteros.uy",
                             NombreMostrado = "Visitante",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==",
                             Rol = "visitante"
                         });
                 });

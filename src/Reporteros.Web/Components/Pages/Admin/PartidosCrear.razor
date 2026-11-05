@@ -1,6 +1,8 @@
 ﻿@page "/admin/partidos/crear"
 
 @inject ReporterosApiClient Api
+@inject Reporteros.Web.Services.TokenStorage Tokens
+@inject NavigationManager Nav
 
 <PageTitle>Crear partido — REPORTEROS</PageTitle>
 
@@ -81,6 +83,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (!Tokens.EstaAutenticado) { Nav.NavigateTo("/login"); return; }
         try
         {
             competiciones = await Api.GetCompeticionesAsync();

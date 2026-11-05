@@ -1,0 +1,55 @@
+﻿@page "/login"
+
+@inject ReporterosApiClient Api
+@inject Reporteros.Web.Services.TokenStorage Tokens
+@inject NavigationManager Nav
+
+<PageTitle>Login — REPORTEROS</PageTitle>
+
+<h1>Login</h1>
+
+<EditForm Model="modelo" OnValidSubmit="Ingresar">
+    <div class="mb-2">
+        <label>Correo</label>
+        <InputText @bind-Value="modelo.Correo" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Contraseña</label>
+        <InputText @bind-Value="modelo.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Ingresar</button>
+</EditForm>
+
+@if (error is not null)
+{
+    <p class="text-danger mt-2">Error: @error</p>
+}
+
+<p class="mt-3"><a href="/">Volver al inicio</a></p>
+
+@code {
+    private LoginRequestDTO modelo = new();
+    private string? error;
+
+    private async Task Ingresar()
+    {
+        error = null;
+        try
+        {
+            var resp = await Api.LoginAsync(modelo);
+            if (resp is null)
+            {
+                error = "Credenciales invalidas.";
+                return;
+            }
+            Tokens.Token = resp.Token;
+            Tokens.Rol = resp.Usuario.Rol;
+            Tokens.Nombre = resp.Usuario.NombreMostrado;
+            Nav.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

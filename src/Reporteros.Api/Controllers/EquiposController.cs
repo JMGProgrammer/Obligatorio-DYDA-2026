@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reporteros.Api.DTOs;
 using Reporteros.Api.Interfaces;
@@ -22,6 +23,7 @@ namespace Reporteros.Api.Controllers
             return Ok(resultado);
         }
 
+        [Authorize(Roles = "admin,editor")]
         [HttpPost]
         public async Task<ActionResult<EquipoReadDTO>> Crear([FromBody] EquipoCreateDTO dto, CancellationToken cancellationToken)
         {

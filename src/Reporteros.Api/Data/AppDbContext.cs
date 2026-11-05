@@ -159,10 +159,10 @@ namespace Reporteros.Api.Data
 
             // Seed: usuarios (roles)
             modelBuilder.Entity<Usuario>().HasData(
-                new Usuario { Id = 1, Correo = "admin@reporteros.uy", NombreMostrado = "Admin", Rol = "admin" },
-                new Usuario { Id = 2, Correo = "editor@reporteros.uy", NombreMostrado = "Editor", Rol = "editor" },
-                new Usuario { Id = 3, Correo = "revisor@reporteros.uy", NombreMostrado = "Revisor", Rol = "revisor" },
-                new Usuario { Id = 4, Correo = "visitante@reporteros.uy", NombreMostrado = "Visitante", Rol = "visitante" }
+                new Usuario { Id = 1, Correo = "admin@reporteros.uy", NombreMostrado = "Admin", Rol = "admin", PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==" },
+                new Usuario { Id = 2, Correo = "editor@reporteros.uy", NombreMostrado = "Editor", Rol = "editor", PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==" },
+                new Usuario { Id = 3, Correo = "revisor@reporteros.uy", NombreMostrado = "Revisor", Rol = "revisor", PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==" },
+                new Usuario { Id = 4, Correo = "visitante@reporteros.uy", NombreMostrado = "Visitante", Rol = "visitante", PasswordHash = "AQAAAAEAACcQAAAAEPFtpYysK++ZyMuQ4lXZGumfPzGNLmx7Rn08JNT8JuT/mj8xjDBo5jgxqN3LjVobpw==" }
             );
 
             // Seed: fuentes

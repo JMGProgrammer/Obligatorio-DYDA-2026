@@ -26,6 +26,14 @@ public sealed class ReporterosApiClient(HttpClient httpClient)
         }
     }
 
+    public async Task<LoginResponseDTO?> LoginAsync(LoginRequestDTO input, CancellationToken cancellationToken = default)
+    {
+        var response = await _http.PostAsJsonAsync("api/v1/auth/login", input, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+            return null;
+        return await response.Content.ReadFromJsonAsync<LoginResponseDTO>(cancellationToken);
+    }
+
     public async Task<List<DeporteReadDTO>> GetDeportesAsync(CancellationToken cancellationToken = default)
     {
         return await _http.GetFromJsonAsync<List<DeporteReadDTO>>("api/v1/deportes", cancellationToken)

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reporteros.Api.DTOs;
 using Reporteros.Api.Interfaces;
@@ -31,6 +32,7 @@ namespace Reporteros.Api.Controllers
             return Ok(resultado);
         }
 
+        [Authorize(Roles = "admin,editor")]
         [HttpPost]
         [Route("/api/v1/admin/articulos")]
         public async Task<ActionResult<ArticuloReadDTO>> CrearBorrador([FromBody] ArticuloCreateDTO dto, CancellationToken cancellationToken)
@@ -50,6 +52,7 @@ namespace Reporteros.Api.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,editor,revisor")]
         [HttpPost("{id:long}/publish")]
         [Route("/api/v1/admin/articulos/{id:long}/publish")]
         public async Task<ActionResult<ArticuloReadDTO>> Publicar(long id, CancellationToken cancellationToken)
