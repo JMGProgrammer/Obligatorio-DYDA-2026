@@ -82,6 +82,16 @@
 </div>
 
 @code {
+    protected override void OnInitialized()
+    {
+        Tokens.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        Tokens.OnChange -= StateHasChanged;
+    }
+
     private void Logout()
     {
         Tokens.Limpiar();
