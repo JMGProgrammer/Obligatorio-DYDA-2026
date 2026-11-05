@@ -1,0 +1,90 @@
+﻿@page "/clasificacion"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Clasificación — REPORTEROS</PageTitle>
+
+<h1>Clasificación (tabla de posiciones)</h1>
+
+<div class="mb-3">
+    <label>Temporada Id: </label>
+    <input type="number" @bind="temporadaId" />
+    <button class="btn btn-primary btn-sm" @onclick="Cargar">Cargar</button>
+</div>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (tabla is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>PJ</th>
+                <th>PG</th>
+                <th>PE</th>
+                <th>PP</th>
+                <th>GF</th>
+                <th>GC</th>
+                <th>DG</th>
+                <th>Pts</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var pos = 1; }
+            @foreach (var s in tabla)
+            {
+                <tr>
+                    <td>@pos</td>
+                    <td>@s.EquipoNombre</td>
+                    <td>@s.PJ</td>
+                    <td>@s.PG</td>
+                    <td>@s.PE</td>
+                    <td>@s.PP</td>
+                    <td>@s.GF</td>
+                    <td>@s.GC</td>
+                    <td>@s.DG</td>
+                    <td><strong>@s.Pts</strong></td>
+                </tr>
+                pos++;
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private long temporadaId = 1;
+    private List<StandingsReadDTO>? tabla;
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        cargando = true;
+        error = null;
+        try
+        {
+            tabla = await Api.GetStandingsAsync(temporadaId);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

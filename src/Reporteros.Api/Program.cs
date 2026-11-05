@@ -26,6 +26,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         mysql => mysql.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IArticuloService, ArticuloService>();
+builder.Services.AddScoped<IDeporteService, DeporteService>();
+builder.Services.AddScoped<IStandingsService, StandingsService>();
 
 var app = builder.Build();
 

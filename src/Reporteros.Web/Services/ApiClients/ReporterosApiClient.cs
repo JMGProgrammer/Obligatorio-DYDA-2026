@@ -50,6 +50,12 @@ public sealed class ReporterosApiClient(HttpClient httpClient)
                ?? new List<EquipoReadDTO>();
     }
 
+    public async Task<List<StandingsReadDTO>> GetStandingsAsync(long temporadaId, CancellationToken cancellationToken = default)
+    {
+        return await _http.GetFromJsonAsync<List<StandingsReadDTO>>($"api/v1/temporadas/{temporadaId}/clasificacion", cancellationToken)
+               ?? new List<StandingsReadDTO>();
+    }
+
     public async Task<List<PartidoReadDTO>> GetPartidosPorTemporadaAsync(long temporadaId, CancellationToken cancellationToken = default)
     {
         return await _http.GetFromJsonAsync<List<PartidoReadDTO>>($"api/v1/partidos/por-temporada/{temporadaId}", cancellationToken)
