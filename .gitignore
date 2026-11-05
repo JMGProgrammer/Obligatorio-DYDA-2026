@@ -32,3 +32,4 @@ mobile/.expo/
 mobile/dist/
 mobile/web-build/
 mobile/.env
+*.pem
