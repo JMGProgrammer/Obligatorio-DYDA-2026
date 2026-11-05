@@ -71,6 +71,31 @@ namespace Reporteros.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Articulos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            ActualizadoEn = new DateTime(2026, 8, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            AutorUsuarioId = 2L,
+                            Cuerpo = "Contenido de bienvenida.",
+                            Estado = "publicado",
+                            PublicadoEn = new DateTime(2026, 8, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Resumen = "El deporte uruguayo tiene quien lo cuente.",
+                            Slug = "bienvenida-reporteros",
+                            Titulo = "Bienvenidos a REPORTEROS"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            ActualizadoEn = new DateTime(2026, 8, 2, 12, 0, 0, 0, DateTimeKind.Utc),
+                            AutorUsuarioId = 2L,
+                            Cuerpo = "Cuerpo borrador.",
+                            Estado = "borrador",
+                            Resumen = "Resumen borrador.",
+                            Slug = "borrador-noticia",
+                            Titulo = "Borrador de noticia"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.ArticuloDeporte", b =>
@@ -86,6 +111,13 @@ namespace Reporteros.Api.Migrations
                     b.HasIndex("DeporteId");
 
                     b.ToTable("ArticulosDeporte");
+
+                    b.HasData(
+                        new
+                        {
+                            ArticuloId = 1L,
+                            DeporteId = 1L
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Competicion", b =>
@@ -124,6 +156,33 @@ namespace Reporteros.Api.Migrations
                     b.HasIndex("JuegoId");
 
                     b.ToTable("Competiciones");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Ambito = "nacional",
+                            DeporteId = 1L,
+                            Formato = "liga",
+                            Nombre = "Campeonato Uruguayo"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Ambito = "nacional",
+                            DeporteId = 2L,
+                            Formato = "liga",
+                            Nombre = "Liga Uruguaya de Básquetbol"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Ambito = "nacional",
+                            DeporteId = 3L,
+                            Formato = "liga",
+                            JuegoId = 1L,
+                            Nombre = "Liga Uruguaya de LoL"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Deporte", b =>
@@ -212,6 +271,64 @@ namespace Reporteros.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Equipos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Nombre = "Peñarol",
+                            Region = "Montevideo",
+                            Slug = "penarol"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Nombre = "Nacional",
+                            Region = "Montevideo",
+                            Slug = "nacional"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Nombre = "Defensor Sporting",
+                            Region = "Montevideo",
+                            Slug = "defensor-sporting"
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Nombre = "Liverpool",
+                            Region = "Montevideo",
+                            Slug = "liverpool"
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Nombre = "Aguada",
+                            Region = "Montevideo",
+                            Slug = "aguada"
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Nombre = "Malvín",
+                            Region = "Montevideo",
+                            Slug = "malvin"
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            Nombre = "Team Alpha",
+                            Region = "Montevideo",
+                            Slug = "team-alpha"
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            Nombre = "Team Beta",
+                            Region = "Montevideo",
+                            Slug = "team-beta"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.EquipoTemporada", b =>
@@ -236,6 +353,56 @@ namespace Reporteros.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("EquiposTemporada");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            EquipoId = 1L,
+                            TemporadaId = 1L
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            EquipoId = 2L,
+                            TemporadaId = 1L
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            EquipoId = 3L,
+                            TemporadaId = 1L
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            EquipoId = 4L,
+                            TemporadaId = 1L
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            EquipoId = 5L,
+                            TemporadaId = 2L
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            EquipoId = 6L,
+                            TemporadaId = 2L
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            EquipoId = 7L,
+                            TemporadaId = 3L
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            EquipoId = 8L,
+                            TemporadaId = 3L
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.EventoPartido", b =>
@@ -299,6 +466,23 @@ namespace Reporteros.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Fuentes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Atribucion = "AUF",
+                            Confianza = "alta",
+                            Titulo = "Acta oficial AUF",
+                            Url = "https://auf.org.uy"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Atribucion = "Equipo editorial",
+                            Confianza = "media",
+                            Titulo = "Carga manual editor"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Juego", b =>
@@ -330,6 +514,15 @@ namespace Reporteros.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Juegos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            DeporteId = 3L,
+                            Nombre = "League of Legends",
+                            Slug = "league-of-legends"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Partido", b =>
@@ -391,6 +584,128 @@ namespace Reporteros.Api.Migrations
                     b.HasIndex("TemporadaId", "ProgramadoEn");
 
                     b.ToTable("Partidos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            ActualizadoEn = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 1L,
+                            EquipoVisitanteId = 2L,
+                            Estado = "programado",
+                            ProgramadoEn = new DateTime(2026, 9, 10, 20, 0, 0, 0, DateTimeKind.Utc),
+                            TemporadaId = 1L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            ActualizadoEn = new DateTime(2026, 8, 20, 21, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 3L,
+                            EquipoVisitanteId = 4L,
+                            Estado = "finalizado",
+                            FuenteId = 1L,
+                            ProgramadoEn = new DateTime(2026, 8, 20, 19, 0, 0, 0, DateTimeKind.Utc),
+                            PublicadoEn = new DateTime(2026, 8, 20, 21, 0, 0, 0, DateTimeKind.Utc),
+                            PuntosLocal = 2,
+                            PuntosVisitante = 1,
+                            TemporadaId = 1L,
+                            Version = 2
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            ActualizadoEn = new DateTime(2026, 8, 27, 22, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 1L,
+                            EquipoVisitanteId = 3L,
+                            Estado = "finalizado",
+                            FuenteId = 1L,
+                            ProgramadoEn = new DateTime(2026, 8, 27, 20, 0, 0, 0, DateTimeKind.Utc),
+                            PublicadoEn = new DateTime(2026, 8, 27, 22, 0, 0, 0, DateTimeKind.Utc),
+                            PuntosLocal = 1,
+                            PuntosVisitante = 1,
+                            TemporadaId = 1L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            ActualizadoEn = new DateTime(2026, 9, 3, 16, 30, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 2L,
+                            EquipoVisitanteId = 4L,
+                            Estado = "suspendido",
+                            ProgramadoEn = new DateTime(2026, 9, 3, 16, 0, 0, 0, DateTimeKind.Utc),
+                            TemporadaId = 1L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            ActualizadoEn = new DateTime(2026, 9, 17, 22, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 1L,
+                            EquipoVisitanteId = 4L,
+                            Estado = "provisional",
+                            FuenteId = 2L,
+                            ProgramadoEn = new DateTime(2026, 9, 17, 20, 0, 0, 0, DateTimeKind.Utc),
+                            PuntosLocal = 2,
+                            PuntosVisitante = 0,
+                            TemporadaId = 1L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            ActualizadoEn = new DateTime(2026, 9, 5, 23, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 5L,
+                            EquipoVisitanteId = 6L,
+                            Estado = "finalizado",
+                            FuenteId = 1L,
+                            ProgramadoEn = new DateTime(2026, 9, 5, 21, 0, 0, 0, DateTimeKind.Utc),
+                            PublicadoEn = new DateTime(2026, 9, 5, 23, 0, 0, 0, DateTimeKind.Utc),
+                            PuntosLocal = 85,
+                            PuntosVisitante = 80,
+                            TemporadaId = 2L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            ActualizadoEn = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 6L,
+                            EquipoVisitanteId = 5L,
+                            Estado = "programado",
+                            ProgramadoEn = new DateTime(2026, 9, 12, 21, 0, 0, 0, DateTimeKind.Utc),
+                            TemporadaId = 2L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            ActualizadoEn = new DateTime(2026, 6, 10, 20, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 7L,
+                            EquipoVisitanteId = 8L,
+                            Estado = "finalizado",
+                            FuenteId = 1L,
+                            MejorDe = 3,
+                            ProgramadoEn = new DateTime(2026, 6, 10, 18, 0, 0, 0, DateTimeKind.Utc),
+                            PublicadoEn = new DateTime(2026, 6, 10, 20, 0, 0, 0, DateTimeKind.Utc),
+                            PuntosLocal = 2,
+                            PuntosVisitante = 1,
+                            TemporadaId = 3L,
+                            Version = 1
+                        },
+                        new
+                        {
+                            Id = 9L,
+                            ActualizadoEn = new DateTime(2026, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EquipoLocalId = 8L,
+                            EquipoVisitanteId = 7L,
+                            Estado = "programado",
+                            MejorDe = 3,
+                            ProgramadoEn = new DateTime(2026, 6, 17, 18, 0, 0, 0, DateTimeKind.Utc),
+                            TemporadaId = 3L,
+                            Version = 1
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.RegistroAuditoria", b =>
@@ -504,6 +819,35 @@ namespace Reporteros.Api.Migrations
                     b.HasIndex("CompeticionId", "Inicio");
 
                     b.ToTable("Temporadas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CompeticionId = 1L,
+                            Estado = "en_curso",
+                            Etiqueta = "2026",
+                            Fin = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Inicio = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CompeticionId = 2L,
+                            Estado = "en_curso",
+                            Etiqueta = "2026",
+                            Fin = new DateTime(2026, 12, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Inicio = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            CompeticionId = 3L,
+                            Estado = "en_curso",
+                            Etiqueta = "2026 Split 1",
+                            Fin = new DateTime(2026, 8, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Inicio = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Usuario", b =>
@@ -535,6 +879,36 @@ namespace Reporteros.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Correo = "admin@reporteros.uy",
+                            NombreMostrado = "Admin",
+                            Rol = "admin"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Correo = "editor@reporteros.uy",
+                            NombreMostrado = "Editor",
+                            Rol = "editor"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Correo = "revisor@reporteros.uy",
+                            NombreMostrado = "Revisor",
+                            Rol = "revisor"
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Correo = "visitante@reporteros.uy",
+                            NombreMostrado = "Visitante",
+                            Rol = "visitante"
+                        });
                 });
 
             modelBuilder.Entity("Reporteros.Api.Models.Articulo", b =>

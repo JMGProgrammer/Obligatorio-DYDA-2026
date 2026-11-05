@@ -16,8 +16,14 @@ builder.Services.AddHealthChecks();
 var cadenaConexion = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Falta la cadena de conexion 'DefaultConnection'.");
 
+builder.Services.AddScoped<ICompeticionService, CompeticionService>();
+builder.Services.AddScoped<ITemporadaService, TemporadaService>();
+builder.Services.AddScoped<IEquipoService, EquipoService>();
+builder.Services.AddScoped<IPartidoService, PartidoService>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(cadenaConexion, ServerVersion.AutoDetect(cadenaConexion)));
+    options.UseMySql(cadenaConexion, ServerVersion.AutoDetect(cadenaConexion),
+        mysql => mysql.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IDeporteService, DeporteService>();
 
