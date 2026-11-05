@@ -1,0 +1,86 @@
+﻿@page "/partidos"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Partidos — REPORTEROS</PageTitle>
+
+<h1>Partidos</h1>
+
+<div class="mb-3">
+    <label>Temporada Id: </label>
+    <input type="number" @bind="temporadaId" />
+    <button class="btn btn-primary btn-sm" @onclick="Cargar">Cargar</button>
+</div>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (partidos is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Competición</th>
+                <th>Deporte</th>
+                <th>Local</th>
+                <th>Visitante</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Marcador</th>
+                <th>Versión</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in partidos)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.CompeticionNombre</td>
+                    <td>@p.DeporteNombre</td>
+                    <td>@p.EquipoLocalNombre</td>
+                    <td>@p.EquipoVisitanteNombre</td>
+                    <td>@p.ProgramadoEn.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@p.Estado</td>
+                    <td>@(p.PuntosLocal.HasValue ? $"{p.PuntosLocal} - {p.PuntosVisitante}" : "-")</td>
+                    <td>@p.Version</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private long temporadaId = 1;
+    private List<PartidoReadDTO>? partidos;
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        cargando = true;
+        error = null;
+        try
+        {
+            partidos = await Api.GetPartidosPorTemporadaAsync(temporadaId);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

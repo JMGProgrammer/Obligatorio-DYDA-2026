@@ -1,7 +1,52 @@
 ﻿@page "/"
 
+@inject ReporterosApiClient Api
+
 <PageTitle>REPORTEROS</PageTitle>
 
 <h1>REPORTEROS</h1>
-
 <p>Centro de información deportiva uruguaya.</p>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (deportes is not null)
+{
+    <h2>Deportes</h2>
+    <ul>
+        @foreach (var d in deportes)
+        {
+            <li>@d.Nombre (@d.Tipo) — <a href="/competiciones">ver competiciones</a></li>
+        }
+    </ul>
+    <p>API saludable: @(saludable ? "si" : "no")</p>
+}
+
+@code {
+    private List<DeporteReadDTO>? deportes;
+    private bool cargando = true;
+    private bool saludable;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            saludable = await Api.IsHealthyAsync();
+            deportes = await Api.GetDeportesAsync();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

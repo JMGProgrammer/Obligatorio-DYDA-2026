@@ -1,0 +1,67 @@
+﻿@page "/competiciones"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Competiciones — REPORTEROS</PageTitle>
+
+<h1>Competiciones</h1>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (competiciones is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Deporte</th>
+                <th>Ámbito</th>
+                <th>Formato</th>
+                <th>Juego</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in competiciones)
+            {
+                <tr>
+                    <td>@c.Id</td>
+                    <td>@c.Nombre</td>
+                    <td>@c.DeporteNombre</td>
+                    <td>@c.Ambito</td>
+                    <td>@c.Formato</td>
+                    <td>@(c.JuegoNombre ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p><a href="/partidos">Ver partidos</a></p>
+}
+
+@code {
+    private List<CompeticionReadDTO>? competiciones;
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            competiciones = await Api.GetCompeticionesAsync();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

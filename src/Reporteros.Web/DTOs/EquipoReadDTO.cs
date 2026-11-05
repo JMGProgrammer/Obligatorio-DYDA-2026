@@ -1,0 +1,11 @@
+namespace Reporteros.Web.DTOs
+{
+    public class EquipoReadDTO
+    {
+        public long Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
+        public string? Region { get; set; }
+        public string? UrlLogo { get; set; }
+    }
+}
