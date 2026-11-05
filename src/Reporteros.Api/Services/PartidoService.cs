@@ -104,82 +104,86 @@ namespace Reporteros.Api.Services
             _contexto.Partidos.Add(partido);
             await _contexto.SaveChangesAsync(cancellationToken);
 
-            // Recargar con includes para el DTO
             var creado = await ConsultaBase().FirstAsync(p => p.Id == partido.Id, cancellationToken);
             return Mapear(creado);
         }
 
         public async Task<PartidoReadDTO> PublicarResultadoAsync(long id, long editorUsuarioId, PartidoResultadoDTO dto, CancellationToken cancellationToken = default)
         {
-            using var transaccion = await _contexto.Database.BeginTransactionAsync(cancellationToken);
+            var strategy = _contexto.Database.CreateExecutionStrategy();
 
-            var partido = await _contexto.Partidos
-                .Include(p => p.Temporada).ThenInclude(t => t.Competicion).ThenInclude(c => c.Deporte)
-                .Include(p => p.EquipoLocal)
-                .Include(p => p.EquipoVisitante)
-                .Include(p => p.Fuente)
-                .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-
-            if (partido is null)
-                throw new KeyNotFoundException($"Partido {id} no existe.");
-
-            if (partido.Version != dto.Version)
-                throw new InvalidOperationException($"Conflicto de version: el partido esta en version {partido.Version}, se envio {dto.Version} (409).");
-
-            var anterior = System.Text.Json.JsonSerializer.Serialize(new
+            return await strategy.ExecuteAsync(async () =>
             {
-                partido.PuntosLocal,
-                partido.PuntosVisitante,
-                partido.Estado,
-                partido.Version
-            });
+                using var transaccion = await _contexto.Database.BeginTransactionAsync(cancellationToken);
 
-            partido.PuntosLocal = dto.PuntosLocal;
-            partido.PuntosVisitante = dto.PuntosVisitante;
-            partido.Estado = dto.Estado;
-            partido.Version += 1;
-            partido.ActualizadoEn = DateTime.UtcNow;
-            if (dto.Estado == "finalizado" || dto.Estado == "publicado")
-                partido.PublicadoEn ??= DateTime.UtcNow;
+                var partido = await _contexto.Partidos
+                    .Include(p => p.Temporada).ThenInclude(t => t.Competicion).ThenInclude(c => c.Deporte)
+                    .Include(p => p.EquipoLocal)
+                    .Include(p => p.EquipoVisitante)
+                    .Include(p => p.Fuente)
+                    .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
-            var revision = new RevisionResultado
-            {
-                PartidoId = partido.Id,
-                EditorUsuarioId = editorUsuarioId,
-                AnteriorJson = anterior,
-                NuevoJson = System.Text.Json.JsonSerializer.Serialize(new
+                if (partido is null)
+                    throw new KeyNotFoundException($"Partido {id} no existe.");
+
+                if (partido.Version != dto.Version)
+                    throw new InvalidOperationException($"Conflicto de version: el partido esta en version {partido.Version}, se envio {dto.Version} (409).");
+
+                var anterior = System.Text.Json.JsonSerializer.Serialize(new
                 {
                     partido.PuntosLocal,
                     partido.PuntosVisitante,
                     partido.Estado,
                     partido.Version
-                }),
-                Motivo = dto.Motivo,
-                CambiadoEn = DateTime.UtcNow
-            };
-            _contexto.RevisionesResultado.Add(revision);
+                });
 
-            var auditoria = new RegistroAuditoria
-            {
-                ActorUsuarioId = editorUsuarioId,
-                Accion = "publicar_resultado",
-                TipoEntidad = "Partido",
-                EntidadId = partido.Id,
-                OcurridoEn = DateTime.UtcNow,
-                DetallesJson = System.Text.Json.JsonSerializer.Serialize(new
+                partido.PuntosLocal = dto.PuntosLocal;
+                partido.PuntosVisitante = dto.PuntosVisitante;
+                partido.Estado = dto.Estado;
+                partido.Version += 1;
+                partido.ActualizadoEn = DateTime.UtcNow;
+                if (dto.Estado == "finalizado" || dto.Estado == "publicado")
+                    partido.PublicadoEn ??= DateTime.UtcNow;
+
+                var revision = new RevisionResultado
                 {
-                    partido.PuntosLocal,
-                    partido.PuntosVisitante,
-                    partido.Estado,
-                    Motivo = dto.Motivo
-                })
-            };
-            _contexto.RegistrosAuditoria.Add(auditoria);
+                    PartidoId = partido.Id,
+                    EditorUsuarioId = editorUsuarioId,
+                    AnteriorJson = anterior,
+                    NuevoJson = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        partido.PuntosLocal,
+                        partido.PuntosVisitante,
+                        partido.Estado,
+                        partido.Version
+                    }),
+                    Motivo = dto.Motivo,
+                    CambiadoEn = DateTime.UtcNow
+                };
+                _contexto.RevisionesResultado.Add(revision);
 
-            await _contexto.SaveChangesAsync(cancellationToken);
-            await transaccion.CommitAsync(cancellationToken);
+                var auditoria = new RegistroAuditoria
+                {
+                    ActorUsuarioId = editorUsuarioId,
+                    Accion = "publicar_resultado",
+                    TipoEntidad = "Partido",
+                    EntidadId = partido.Id,
+                    OcurridoEn = DateTime.UtcNow,
+                    DetallesJson = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        partido.PuntosLocal,
+                        partido.PuntosVisitante,
+                        partido.Estado,
+                        Motivo = dto.Motivo
+                    })
+                };
+                _contexto.RegistrosAuditoria.Add(auditoria);
 
-            return Mapear(partido);
+                await _contexto.SaveChangesAsync(cancellationToken);
+                await transaccion.CommitAsync(cancellationToken);
+
+                return Mapear(partido);
+            });
         }
     }
 }
