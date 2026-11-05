@@ -1,0 +1,56 @@
+﻿@page "/admin/articulos/crear"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Crear artículo — REPORTEROS</PageTitle>
+
+<h1>Crear artículo (borrador)</h1>
+
+<EditForm Model="modelo" OnValidSubmit="Guardar">
+    <div class="mb-2">
+        <label>Autor Id</label>
+        <InputNumber @bind-Value="modelo.AutorUsuarioId" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Slug</label>
+        <InputText @bind-Value="modelo.Slug" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Título</label>
+        <InputText @bind-Value="modelo.Titulo" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Resumen</label>
+        <InputText @bind-Value="modelo.Resumen" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Cuerpo</label>
+        <InputTextArea @bind-Value="modelo.Cuerpo" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Crear borrador</button>
+</EditForm>
+
+@if (mensaje is not null) { <p class="mt-2">@mensaje</p> }
+@if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
+
+@code {
+    private ArticuloCreateDTO modelo = new() { AutorUsuarioId = 2 };
+    private string? error;
+    private string? mensaje;
+
+    private async Task Guardar()
+    {
+        error = null;
+        mensaje = null;
+        try
+        {
+            var creado = await Api.CrearArticuloAsync(modelo);
+            mensaje = $"Borrador creado Id={creado.Id}: {creado.Titulo}";
+            modelo = new ArticuloCreateDTO { AutorUsuarioId = modelo.AutorUsuarioId };
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

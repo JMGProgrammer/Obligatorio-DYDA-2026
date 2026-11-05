@@ -1,0 +1,37 @@
+﻿@page "/admin/articulos/publicar"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>Publicar artículo — REPORTEROS</PageTitle>
+
+<h1>Publicar artículo</h1>
+
+<div class="mb-2">
+    <label>Artículo Id (borrador)</label>
+    <InputNumber @bind-Value="articuloId" class="form-control" />
+</div>
+<button class="btn btn-primary" @onclick="Publicar">Publicar</button>
+
+@if (mensaje is not null) { <p class="mt-2">@mensaje</p> }
+@if (error is not null) { <p class="text-danger mt-2">Error: @error</p> }
+
+@code {
+    private long articuloId = 2;
+    private string? error;
+    private string? mensaje;
+
+    private async Task Publicar()
+    {
+        error = null;
+        mensaje = null;
+        try
+        {
+            var publicado = await Api.PublicarArticuloAsync(articuloId);
+            mensaje = $"Publicado: {publicado.Titulo} (slug: {publicado.Slug})";
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

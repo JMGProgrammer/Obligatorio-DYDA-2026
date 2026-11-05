@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(cadenaConexion, ServerVersion.AutoDetect(cadenaConexion),
         mysql => mysql.EnableRetryOnFailure()));
 
-builder.Services.AddScoped<IDeporteService, DeporteService>();
+builder.Services.AddScoped<IArticuloService, ArticuloService>();
 
 var app = builder.Build();
 

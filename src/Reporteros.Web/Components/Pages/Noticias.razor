@@ -1,0 +1,60 @@
+﻿@page "/noticias"
+
+@inject ReporterosApiClient Api
+@inject NavigationManager Nav
+
+<PageTitle>Noticias — REPORTEROS</PageTitle>
+
+<h1>Noticias</h1>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (articulos is not null)
+{
+    @if (articulos.Count == 0)
+    {
+        <p>No hay noticias publicadas.</p>
+    }
+    else
+    {
+        <ul class="list-unstyled">
+            @foreach (var a in articulos)
+            {
+                <li class="mb-3">
+                    <h3><a href="/noticias/@a.Slug">@a.Titulo</a></h3>
+                    <small class="text-muted">@a.PublicadoEn?.ToString("yyyy-MM-dd") — @a.AutorNombre</small>
+                    <p>@a.Resumen</p>
+                </li>
+            }
+        </ul>
+    }
+    <p><a href="/admin/articulos/crear">Crear borrador</a> · <a href="/admin/articulos/publicar">Publicar</a></p>
+}
+
+@code {
+    private List<ArticuloReadDTO>? articulos;
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            articulos = await Api.GetArticulosAsync();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

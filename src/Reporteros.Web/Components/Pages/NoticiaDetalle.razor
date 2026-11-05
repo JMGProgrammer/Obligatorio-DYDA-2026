@@ -1,0 +1,49 @@
+﻿@page "/noticias/{slug}"
+
+@inject ReporterosApiClient Api
+
+<PageTitle>@(articulo?.Titulo ?? "Noticia") — REPORTEROS</PageTitle>
+
+@if (cargando)
+{
+    <p>Cargando...</p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else if (articulo is not null)
+{
+    <h1>@articulo.Titulo</h1>
+    <small class="text-muted">@articulo.PublicadoEn?.ToString("yyyy-MM-dd") — @articulo.AutorNombre</small>
+    <p class="mt-3">@articulo.Resumen</p>
+    <div class="mt-3">@articulo.Cuerpo</div>
+    <p class="mt-3"><a href="/noticias">Volver a noticias</a></p>
+}
+else
+{
+    <p>Noticia no encontrada.</p>
+}
+
+@code {
+    [Parameter] public string slug { get; set; } = string.Empty;
+    private ArticuloReadDTO? articulo;
+    private bool cargando = true;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            articulo = await Api.GetArticuloPorSlugAsync(slug);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}
