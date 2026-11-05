@@ -92,6 +92,38 @@ La solución `.NET` contiene únicamente `Reporteros.Api` y `Reporteros.Web`. El
 - Git.
 - MySQL se incorporará al comenzar persistencia.
 
+### Configuración de la base de datos (MySQL / Aiven)
+
+La cadena de conexión **no se versiona** (ni User Secrets ni variables de entorno se commitean). Cada integrante debe configurar la suya una vez al clonar.
+
+**Opción A — User Secrets (recomendada):**
+```bash
+cd src/Reporteros.Api
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=<HOST>;Port=<PORT>;Database=<DB>;User=<USER>;Password=<PASS>;SslMode=Required;"
+```
+Verificar con `dotnet user-secrets list`.
+
+**Opción B — Variable de entorno:**
+```bash
+export ConnectionStrings__DefaultConnection="Server=<HOST>;Port=<PORT>;Database=<DB>;User=<USER>;Password=<PASS>;SslMode=Required;"
+```
+
+**Opción C — `appsettings.Development.json` local (no commitear):**
+Crear `src/Reporteros.Api/appsettings.Development.json` (gitignored) con:
+```json
+{ "ConnectionStrings": { "DefaultConnection": "Server=...;...;SslMode=Required;" } }
+```
+
+Después de configurarla:
+```bash
+cd src/Reporteros.Api
+dotnet ef database update   # crea tablas + seed de 3 deportes
+dotnet run                  # levanta la API
+curl http://localhost:5279/api/v1/deportes
+```
+
+> Si el equipo prefiere cero configuración al clonar, se puede commitear la cadena en `appsettings.Development.json`, pero eso expone las credenciales de Aiven en el repositorio (público). No recomendado.
+
 ### Restaurar y compilar
 
 ```bash
