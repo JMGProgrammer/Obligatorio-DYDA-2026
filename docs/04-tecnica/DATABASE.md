@@ -11,40 +11,40 @@ MySQL es **la única base de datos operativa** para API, web y futuro móvil. La
 ## 2. Diagrama conceptual
 ```mermaid
 erDiagram
-  SPORT ||--o{ COMPETITION : groups
-  GAME ||--o{ COMPETITION : used_by
-  COMPETITION ||--o{ SEASON : contains
-  SEASON ||--o{ MATCH : schedules
-  TEAM ||--o{ MATCH : home
-  TEAM ||--o{ MATCH : away
-  TEAM ||--o{ TEAM_SEASON : registers
-  SEASON ||--o{ TEAM_SEASON : enrolls
-  MATCH ||--o{ MATCH_EVENT : has
-  MATCH ||--o{ RESULT_REVISION : audit
-  SOURCE ||--o{ MATCH : supports
-  USER ||--o{ ARTICLE : authors
-  ARTICLE ||--o{ ARTICLE_SPORT : tagged
-  SPORT ||--o{ ARTICLE_SPORT : categorizes
-  USER ||--o{ AUDIT_LOG : operates
+  DEPORTE ||--o{ COMPETICION : agrupa
+  JUEGO ||--o{ COMPETICION : usado_por
+  COMPETICION ||--o{ TEMPORADA : contiene
+  TEMPORADA ||--o{ PARTIDO : programa
+  EQUIPO ||--o{ PARTIDO : local
+  EQUIPO ||--o{ PARTIDO : visitante
+  EQUIPO ||--o{ EQUIPOTEMPORADA : registra
+  TEMPORADA ||--o{ EQUIPOTEMPORADA : inscribe
+  PARTIDO ||--o{ EVENTOPARTIDO : tiene
+  PARTIDO ||--o{ REVISIONRESULTADO : audita
+  FUENTE ||--o{ PARTIDO : respalda
+  USUARIO ||--o{ ARTICULO : redacta
+  ARTICULO ||--o{ ARTICULODEPORTE : etiqueta
+  DEPORTE ||--o{ ARTICULODEPORTE : categoriza
+  USUARIO ||--o{ REGISTROAUDITORIA : opera
 ```
 
 ## 3. Entidades iniciales
 | Tabla | Campos clave | Restricciones/notas |
 |---|---|---|
-| `sports` | id, slug, name, kind | kind: traditional/esports; slug único |
-| `games` | id, slug, name | Solo para esports; slug único |
-| `competitions` | id, sport_id, game_id?, name, scope, format | game_id requerido para ciertas competencias esports |
-| `seasons` | id, competition_id, label, start_at, end_at, status, rules_json? | Vigencia y reglamento por temporada |
-| `teams` | id, name, slug, region?, logo_url? | Datos mínimos; no falsificar identidades |
-| `team_seasons` | id, season_id, team_id | índice único `(season_id,team_id)` |
-| `matches` | id, season_id, home_team_id, away_team_id, scheduled_at, status, home_score?, away_score?, best_of?, source_id?, version, published_at?, updated_at | Reglas específicas y claves externas |
-| `match_events` | id, match_id, event_type, minute_or_round?, metadata_json? | Tipo válido según deporte |
-| `result_revisions` | id, match_id, editor_user_id, previous_json, new_json, reason, changed_at | Historial inmutable salvo política de retención |
-| `sources` | id, title, url?, captured_at?, confidence?, attribution | Distinguir fuente verificada vs carga manual |
-| `articles` | id, author_user_id, slug, title, summary, body, status, published_at?, updated_at | No publicar borradores |
-| `article_sports` | article_id, sport_id | PK compuesta |
-| `users` / roles | esquema gestionado por identidad elegida | No guardar password en texto plano |
-| `audit_logs` | id, actor_user_id, action, entity_type, entity_id, occurred_at, details_json | No incluir secretos ni información sensible innecesaria |
+| `deportes` | id, slug, nombre, tipo | tipo: tradicional/esports; slug único |
+| `juegos` | id, slug, nombre | Solo para esports; slug único |
+| `competiciones` | id, deporte_id, juego_id?, nombre, ambito, formato | juego_id requerido para ciertas competiciones esports |
+| `temporadas` | id, competicion_id, etiqueta, inicio, fin, estado, reglas_json? | Vigencia y reglamento por temporada |
+| `equipos` | id, nombre, slug, region?, url_logo? | Datos mínimos; no falsificar identidades |
+| `equipos_temporada` | id, temporada_id, equipo_id | índice único `(temporada_id,equipo_id)` |
+| `partidos` | id, temporada_id, equipo_local_id, equipo_visitante_id, programado_en, estado, puntos_local?, puntos_visitante?, mejor_de?, fuente_id?, version, publicado_en?, actualizado_en | Reglas específicas y claves externas |
+| `eventos_partido` | id, partido_id, tipo_evento, minuto_o_ronda?, metadatos_json? | Tipo válido según deporte |
+| `revisiones_resultado` | id, partido_id, editor_usuario_id, anterior_json, nuevo_json, motivo, cambiado_en | Historial inmutable salvo política de retención |
+| `fuentes` | id, titulo, url?, capturado_en?, confianza?, atribucion | Distinguir fuente verificada vs carga manual |
+| `articulos` | id, autor_usuario_id, slug, titulo, resumen, cuerpo, estado, publicado_en?, actualizado_en | No publicar borradores |
+| `articulos_deporte` | articulo_id, deporte_id | PK compuesta |
+| `usuarios` / roles | esquema gestionado por identidad elegida | No guardar password en texto plano |
+| `registros_auditoria` | id, actor_usuario_id, accion, tipo_entidad, entidad_id, ocurrido_en, detalles_json | No incluir secretos ni información sensible innecesaria |
 
 ## 4. Reglas relacionales críticas
 - Equipo local y visitante no pueden coincidir. Los dos deben estar habilitados en la temporada, salvo formato especial documentado.
